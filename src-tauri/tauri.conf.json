@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "easymarkdown",
+  "productName": "EasyMarkdown",
   "version": "0.1.0",
   "identifier": "com.easymarkdown.app",
   "build": {
@@ -13,9 +13,11 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "easymarkdown",
-        "width": 800,
-        "height": 600
+        "title": "EasyMarkdown",
+        "width": 1200,
+        "height": 760,
+        "minWidth": 760,
+        "minHeight": 500
       }
     ],
     "security": {

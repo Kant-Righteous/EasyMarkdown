@@ -1,43 +1,106 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="/src/styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tauri App</title>
+    <title>EasyMarkdown</title>
     <script type="module" src="/src/main.ts" defer></script>
   </head>
-
   <body>
-    <main class="container">
-      <h1>Welcome to Tauri</h1>
+    <main class="app">
+      <header class="app-header" id="toolbar">
+        <div class="menu-bar" role="toolbar" aria-label="文件与视图菜单">
+          <div class="file-menu" role="group" aria-label="文件菜单">
+            <span class="menu-label">文件</span>
+            <button type="button" class="menu-button" data-command="new">
+              新建
+            </button>
+            <button type="button" class="menu-button" data-command="open">
+              打开
+            </button>
+            <button type="button" class="menu-button" data-command="save">
+              保存
+            </button>
+            <button type="button" class="menu-button" data-command="save-as">
+              另存为
+            </button>
+            <button type="button" class="menu-button" data-command="export-pdf">
+              导出 PDF
+            </button>
+          </div>
 
-      <div class="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/src/assets/vite.svg" class="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img
-            src="/src/assets/tauri.svg"
-            class="logo tauri"
-            alt="Tauri logo"
-          />
-        </a>
-        <a href="https://www.typescriptlang.org/docs" target="_blank">
-          <img
-            src="/src/assets/typescript.svg"
-            class="logo typescript"
-            alt="typescript logo"
-          />
-        </a>
-      </div>
-      <p>Click on the Tauri logo to learn more about the framework</p>
+          <div class="view-switcher" role="group" aria-label="视图模式">
+            <button type="button" data-view="edit">编辑</button>
+            <button type="button" data-view="preview">预览</button>
+            <button type="button" data-view="split">分屏</button>
+          </div>
+        </div>
 
-      <form class="row" id="greet-form">
-        <input id="greet-input" placeholder="Enter a name..." />
-        <button type="submit">Greet</button>
-      </form>
-      <p id="greet-msg"></p>
+        <div class="format-bar" role="toolbar" aria-label="Markdown 格式工具栏">
+          <div class="format-group" role="group" aria-label="标题">
+            <span class="format-label">标题</span>
+            <button type="button" data-command="h1" title="一级标题">H1</button>
+            <button type="button" data-command="h2" title="二级标题">H2</button>
+            <button type="button" data-command="h3" title="三级标题">H3</button>
+          </div>
+
+          <div class="format-group" role="group" aria-label="文字强调">
+            <span class="format-label">强调</span>
+            <button type="button" data-command="bold" title="加粗（Ctrl/Cmd + B）">
+              <strong>B</strong>
+            </button>
+            <button
+              type="button"
+              class="italic-button"
+              data-command="italic"
+              title="斜体（Ctrl/Cmd + I）"
+            >
+              /
+            </button>
+          </div>
+
+          <div class="format-group" role="group" aria-label="列表">
+            <span class="format-label">列表</span>
+            <button type="button" data-command="unordered-list">• 无序</button>
+            <button type="button" data-command="ordered-list">1. 有序</button>
+          </div>
+
+          <div class="format-group" role="group" aria-label="块级格式">
+            <span class="format-label">块级</span>
+            <button type="button" data-command="blockquote">“ 引用</button>
+            <button type="button" data-command="code-block">&lt;/&gt; 代码</button>
+          </div>
+
+          <div class="format-group" role="group" aria-label="插入">
+            <span class="format-label">插入</span>
+            <button type="button" data-command="link">↗ 链接</button>
+            <button type="button" data-command="table">▦ 表格</button>
+            <button type="button" data-command="horizontal-rule">— 横线</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="workspace view-split" id="workspace">
+        <div class="editor-pane">
+          <textarea
+            id="editor"
+            aria-label="Markdown 编辑区"
+            spellcheck="false"
+            placeholder="在这里输入 Markdown..."
+          ></textarea>
+        </div>
+        <div class="preview-pane">
+          <article id="preview" aria-label="Markdown 预览区"></article>
+        </div>
+      </section>
+
+      <footer class="statusbar">
+        <span id="status-path">未保存文件</span>
+        <span class="status-right">
+          <span class="status-item" id="status-dirty">已保存</span>
+          <span class="status-item status-mode" id="status-mode">分屏</span>
+        </span>
+      </footer>
     </main>
   </body>
 </html>
