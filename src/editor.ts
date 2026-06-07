@@ -72,6 +72,21 @@ export function insertAtCursor(text: string): void {
   replaceSelection(text);
 }
 
+function runHistoryCommand(command: "undo" | "redo"): void {
+  const element = editor();
+  element.focus();
+  document.execCommand(command);
+  notifyInput();
+}
+
+export function undo(): void {
+  runHistoryCommand("undo");
+}
+
+export function redo(): void {
+  runHistoryCommand("redo");
+}
+
 export function onEditorInput(callback: InputCallback): () => void {
   inputCallbacks.add(callback);
 

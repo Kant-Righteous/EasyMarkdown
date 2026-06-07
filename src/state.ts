@@ -24,9 +24,22 @@ export function getState(): Readonly<AppState> {
   return state;
 }
 
+export function calculateDirtyState(
+  currentContent: string,
+  lastSavedContent: string,
+): boolean {
+  return currentContent !== lastSavedContent;
+}
+
 export function setState(patch: Partial<AppState>): void {
   Object.assign(state, patch);
   listeners.forEach((listener) => listener(state));
+}
+
+export function updateDirtyState(currentContent: string): void {
+  setState({
+    isDirty: calculateDirtyState(currentContent, state.lastSavedContent),
+  });
 }
 
 export function subscribe(listener: StateListener): () => void {

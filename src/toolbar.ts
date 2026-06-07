@@ -12,6 +12,7 @@ import {
 } from "./commands";
 import { exportPdf } from "./exportPdf";
 import { newFile, openFile, saveAsFile, saveFile } from "./file";
+import { redo, undo } from "./editor";
 import { setViewMode } from "./view";
 
 const actions: Record<string, () => void | Promise<unknown>> = {
@@ -20,6 +21,8 @@ const actions: Record<string, () => void | Promise<unknown>> = {
   save: saveFile,
   "save-as": saveAsFile,
   "export-pdf": exportPdf,
+  undo,
+  redo,
   h1: () => heading(1),
   h2: () => heading(2),
   h3: () => heading(3),
@@ -34,8 +37,41 @@ const actions: Record<string, () => void | Promise<unknown>> = {
   "horizontal-rule": horizontalRule,
 };
 
+let toolbarBound = false;
+
+function closeMenus(): void {
+  document.querySelectorAll<HTMLElement>("[data-menu]").forEach((menu) => {
+    menu.hidden = true;
+  });
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-menu-trigger]")
+    .forEach((trigger) => trigger.setAttribute("aria-expanded", "false"));
+}
+
+function toggleMenu(trigger: HTMLButtonElement): void {
+  const menuName = trigger.dataset.menuTrigger;
+  const menu = document.querySelector<HTMLElement>(`[data-menu="${menuName}"]`);
+  const shouldOpen = menu?.hidden ?? false;
+
+  closeMenus();
+  if (!menu || !shouldOpen) return;
+
+  menu.hidden = false;
+  trigger.setAttribute("aria-expanded", "true");
+}
+
 export function bindToolbar(): void {
+  if (toolbarBound) return;
+  toolbarBound = true;
+
   document.querySelector("#toolbar")?.addEventListener("click", (event) => {
+    const target = event.target as Element;
+    const trigger = target.closest<HTMLButtonElement>("[data-menu-trigger]");
+    if (trigger) {
+      toggleMenu(trigger);
+      return;
+    }
+
     const button = (event.target as Element).closest<HTMLButtonElement>(
       "button[data-command], button[data-view]",
     );
@@ -45,11 +81,24 @@ export function bindToolbar(): void {
     const view = button.dataset.view;
 
     if (command && actions[command]) {
+      closeMenus();
       void actions[command]();
     }
 
     if (view === "edit" || view === "preview" || view === "split") {
       setViewMode(view);
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target as Element).closest(".dropdown")) {
+      closeMenus();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeMenus();
     }
   });
 }

@@ -1,25 +1,37 @@
 import { bold, italic, link } from "./commands";
+import { redo, undo } from "./editor";
 import { saveFile } from "./file";
+import { getShortcutAction } from "./shortcutAction";
+
+let shortcutsBound = false;
 
 export function bindShortcuts(): void {
-  document.addEventListener("keydown", (event) => {
-    if (!(event.ctrlKey || event.metaKey) || event.altKey) return;
+  if (shortcutsBound) return;
+  shortcutsBound = true;
 
-    switch (event.key.toLowerCase()) {
-      case "s":
-        event.preventDefault();
+  document.addEventListener("keydown", (event) => {
+    const action = getShortcutAction(event);
+    if (!action) return;
+
+    event.preventDefault();
+
+    switch (action) {
+      case "save":
         void saveFile();
         break;
-      case "b":
-        event.preventDefault();
+      case "undo":
+        undo();
+        break;
+      case "redo":
+        redo();
+        break;
+      case "bold":
         bold();
         break;
-      case "i":
-        event.preventDefault();
+      case "italic":
         italic();
         break;
-      case "k":
-        event.preventDefault();
+      case "link":
         link();
         break;
     }

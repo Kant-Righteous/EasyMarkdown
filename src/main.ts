@@ -3,7 +3,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getContent, onEditorInput, setContent } from "./editor";
 import { renderMarkdown } from "./markdown";
 import { bindShortcuts } from "./shortcuts";
-import { getState, setState, subscribe } from "./state";
+import { getState, subscribe, updateDirtyState } from "./state";
 import { bindToolbar } from "./toolbar";
 import { applyViewMode } from "./view";
 
@@ -24,7 +24,7 @@ function updateChrome(): void {
 
   if (path) path.textContent = state.currentFilePath ?? "未保存文件";
   if (dirty) {
-    dirty.textContent = state.isDirty ? "已修改" : "已保存";
+    dirty.textContent = state.isDirty ? "未保存" : "已保存";
     dirty.classList.toggle("is-dirty", state.isDirty);
   }
   if (mode) {
@@ -53,7 +53,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   onEditorInput(() => {
     const content = getContent();
-    setState({ isDirty: content !== getState().lastSavedContent });
+    updateDirtyState(content);
     window.clearTimeout(previewTimer);
     previewTimer = window.setTimeout(updatePreview, 100);
   });

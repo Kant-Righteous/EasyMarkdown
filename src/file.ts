@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { getContent, setContent } from "./editor";
-import { getState, setState } from "./state";
+import { getState, setState, updateDirtyState } from "./state";
 
 const markdownFilters = [
   {
@@ -43,8 +43,8 @@ export async function newFile(): Promise<void> {
     currentFilePath: null,
     currentFileName: "未命名.md",
     lastSavedContent: "",
-    isDirty: false,
   });
+  updateDirtyState(getContent());
   await updateWindowTitle();
 }
 
@@ -65,8 +65,8 @@ export async function openFile(): Promise<void> {
       currentFilePath: path,
       currentFileName: fileNameFromPath(path),
       lastSavedContent: content,
-      isDirty: false,
     });
+    updateDirtyState(getContent());
     await updateWindowTitle();
   } catch (error) {
     showError("打开文件", error);
@@ -82,8 +82,8 @@ async function writeCurrentFile(path: string): Promise<boolean> {
       currentFilePath: path,
       currentFileName: fileNameFromPath(path),
       lastSavedContent: content,
-      isDirty: false,
     });
+    updateDirtyState(getContent());
     await updateWindowTitle();
     return true;
   } catch (error) {

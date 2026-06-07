@@ -9,24 +9,62 @@
   <body>
     <main class="app">
       <header class="app-header" id="toolbar">
-        <div class="menu-bar" role="toolbar" aria-label="文件与视图菜单">
-          <div class="file-menu" role="group" aria-label="文件菜单">
-            <span class="menu-label">文件</span>
-            <button type="button" class="menu-button" data-command="new">
-              新建
-            </button>
-            <button type="button" class="menu-button" data-command="open">
-              打开
-            </button>
-            <button type="button" class="menu-button" data-command="save">
-              保存
-            </button>
-            <button type="button" class="menu-button" data-command="save-as">
-              另存为
-            </button>
-            <button type="button" class="menu-button" data-command="export-pdf">
-              导出 PDF
-            </button>
+        <div class="menu-bar" role="toolbar" aria-label="文件、操作与视图菜单">
+          <div class="dropdown-menus">
+            <div class="dropdown">
+              <button
+                type="button"
+                class="menu-trigger"
+                data-menu-trigger="file"
+                aria-haspopup="menu"
+                aria-expanded="false"
+              >
+                文件
+                <span class="menu-caret" aria-hidden="true">▾</span>
+              </button>
+              <div class="dropdown-panel" data-menu="file" role="menu" hidden>
+                <button type="button" data-command="new" role="menuitem">
+                  <span>新建</span>
+                </button>
+                <button type="button" data-command="open" role="menuitem">
+                  <span>打开</span>
+                </button>
+                <button type="button" data-command="save" role="menuitem">
+                  <span>保存</span>
+                  <span class="shortcut-hint">Ctrl+S</span>
+                </button>
+                <button type="button" data-command="save-as" role="menuitem">
+                  <span>另存为</span>
+                </button>
+                <div class="menu-separator" role="separator"></div>
+                <button type="button" data-command="export-pdf" role="menuitem">
+                  <span>导出 PDF</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="dropdown">
+              <button
+                type="button"
+                class="menu-trigger"
+                data-menu-trigger="action"
+                aria-haspopup="menu"
+                aria-expanded="false"
+              >
+                操作
+                <span class="menu-caret" aria-hidden="true">▾</span>
+              </button>
+              <div class="dropdown-panel" data-menu="action" role="menu" hidden>
+                <button type="button" data-command="undo" role="menuitem">
+                  <span>撤销</span>
+                  <span class="shortcut-hint">Ctrl+Z</span>
+                </button>
+                <button type="button" data-command="redo" role="menuitem">
+                  <span>重做</span>
+                  <span class="shortcut-hint">Ctrl+Y</span>
+                </button>
+              </div>
+            </div>
           </div>
 
           <div class="view-switcher" role="group" aria-label="视图模式">
@@ -46,16 +84,18 @@
 
           <div class="format-group" role="group" aria-label="文字强调">
             <span class="format-label">强调</span>
-            <button type="button" data-command="bold" title="加粗（Ctrl/Cmd + B）">
+            <button type="button" data-command="bold" title="加粗（Ctrl+B）">
               <strong>B</strong>
+              <span class="button-shortcut">Ctrl+B</span>
             </button>
             <button
               type="button"
               class="italic-button"
               data-command="italic"
-              title="斜体（Ctrl/Cmd + I）"
+              title="斜体（Ctrl+I）"
             >
-              /
+              <span>/</span>
+              <span class="button-shortcut">Ctrl+I</span>
             </button>
           </div>
 
@@ -73,7 +113,10 @@
 
           <div class="format-group" role="group" aria-label="插入">
             <span class="format-label">插入</span>
-            <button type="button" data-command="link">↗ 链接</button>
+            <button type="button" data-command="link" title="链接（Ctrl+K）">
+              ↗ 链接
+              <span class="button-shortcut">Ctrl+K</span>
+            </button>
             <button type="button" data-command="table">▦ 表格</button>
             <button type="button" data-command="horizontal-rule">— 横线</button>
           </div>
