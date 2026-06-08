@@ -594,24 +594,6 @@ button:focus-visible {
 }
 
 /* AI 对话模式 */
-.ai-toggle-wrapper {
-  display: flex;
-  align-items: center;
-  margin-left: 1rem;
-}
-
-.ai-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-}
-
-.ai-toggle input[type="checkbox"] {
-  cursor: pointer;
-}
-
 .ai-bar {
   display: flex;
   align-items: center;

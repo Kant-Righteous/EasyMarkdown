@@ -6,13 +6,15 @@ export function bindAiMode(): void {
   if (aiModeBound) return;
   aiModeBound = true;
 
-  const toggle = document.getElementById('ai-mode-toggle') as HTMLInputElement;
+  const toggle = document.getElementById('ai-mode-toggle') as HTMLButtonElement;
   const aiBar = document.getElementById('ai-bar');
 
   if (!toggle || !aiBar) return;
 
-  toggle.addEventListener('change', () => {
-    aiBar.hidden = !toggle.checked;
+  toggle.addEventListener('click', () => {
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    aiBar.hidden = expanded;
   });
 
   aiBar.addEventListener('click', (event) => {
