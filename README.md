@@ -1,7 +1,37 @@
-# Tauri + Vanilla TS
+# 极简Markdown
 
-This template should help get you started developing with Tauri in vanilla HTML, CSS and Typescript.
+一个轻量、快速、稳定的本地Markdown桌面编辑器。
 
-## Recommended IDE Setup
+## 特点
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+- 🚀 轻量快速 - 启动迅速，运行流畅
+- 💻 本地编辑 - 文件保存在本地，保护隐私
+- 🎨 简洁界面 - 干净清爽，专注写作
+
+## 快速开始
+
+### 安装
+
+1. 下载最新版本
+2. 解压到任意目录
+3. 运行 `EasyMarkdown.exe`
+
+### 使用
+
+1. 启动应用
+2. 新建或打开Markdown文件
+3. 开始写作，实时预览效果
+
+## 功能演示
+
+![功能演示](demo.gif)
+
+- 实时预览
+- 导出PDF
+- 快捷键支持
+- 多种视图模式
+
+## 更多信息
+
+- **技术栈**: Tauri + TypeScript + Vite
+- **许可证**: MIT
