@@ -1,4 +1,11 @@
+import { insertAtCursor } from "./editor";
+
+let aiModeBound = false;
+
 export function bindAiMode(): void {
+  if (aiModeBound) return;
+  aiModeBound = true;
+
   const toggle = document.getElementById('ai-mode-toggle') as HTMLInputElement;
   const aiBar = document.getElementById('ai-bar');
 
@@ -9,28 +16,15 @@ export function bindAiMode(): void {
   });
 
   aiBar.addEventListener('click', (event) => {
-    const target = event.target as HTMLButtonElement;
-    const command = target.dataset.command;
+    const button = (event.target as Element).closest<HTMLButtonElement>("[data-command]");
+    if (!button) return;
+
+    const command = button.dataset.command;
 
     if (command === 'ai-prompt') {
-      insertTemplate('## 👤 用户提示词\n\n');
+      insertAtCursor('## 👤 用户提示词\n\n');
     } else if (command === 'ai-response') {
-      insertTemplate('## 🤖 AI回答\n\n');
+      insertAtCursor('## 🤖 AI回答\n\n');
     }
   });
-}
-
-function insertTemplate(template: string): void {
-  const editor = document.getElementById('editor') as HTMLTextAreaElement;
-  if (!editor) return;
-
-  const start = editor.selectionStart;
-  const end = editor.selectionEnd;
-  const text = editor.value;
-
-  editor.value = text.substring(0, start) + template + text.substring(end);
-  editor.selectionStart = editor.selectionEnd = start + template.length;
-  editor.focus();
-
-  editor.dispatchEvent(new Event('input'));
 }
