@@ -8,6 +8,7 @@ import { getState, subscribe, updateDirtyState } from "./state";
 import { bindToolbar } from "./toolbar";
 import { bindAiMode } from "./ai-mode";
 import { applyViewMode } from "./view";
+import { getCloseAction } from "./close";
 
 let previewTimer: number | undefined;
 
@@ -66,7 +67,8 @@ window.addEventListener("DOMContentLoaded", () => {
   updateChrome();
 
   getCurrentWindow().onCloseRequested(async (event) => {
-    if (!getState().isDirty) return;
+    const isDirty = getState().isDirty;
+    if (getCloseAction(isDirty) === "default") return;
 
     event.preventDefault();
     const saveFirst = await ask("文件尚未保存，是否保存后关闭？", {
@@ -74,13 +76,13 @@ window.addEventListener("DOMContentLoaded", () => {
       kind: "warning",
     });
 
+    let saveSucceeded: boolean | undefined;
     if (saveFirst) {
       const { saveFile } = await import("./file");
-      const saved = await saveFile();
-      if (saved) {
-        await getCurrentWindow().destroy();
-      }
-    } else {
+      saveSucceeded = await saveFile();
+    }
+
+    if (getCloseAction(isDirty, saveFirst, saveSucceeded) === "destroy") {
       await getCurrentWindow().destroy();
     }
   });
