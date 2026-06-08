@@ -67,6 +67,13 @@
             </div>
           </div>
 
+          <div class="ai-toggle-wrapper">
+            <label class="ai-toggle">
+              <input type="checkbox" id="ai-mode-toggle">
+              <span>AI对话保存模式</span>
+            </label>
+          </div>
+
           <div class="view-switcher" role="group" aria-label="视图模式">
             <button type="button" data-view="edit">编辑</button>
             <button type="button" data-view="preview">预览</button>
@@ -119,6 +126,14 @@
             </button>
             <button type="button" data-command="table">▦ 表格</button>
             <button type="button" data-command="horizontal-rule">— 横线</button>
+          </div>
+        </div>
+
+        <div class="ai-bar" id="ai-bar" hidden>
+          <div class="ai-group" role="group" aria-label="AI 对话模板">
+            <span class="format-label">AI 对话</span>
+            <button type="button" data-command="ai-prompt">👤 用户提示词</button>
+            <button type="button" data-command="ai-response">🤖 AI回答</button>
           </div>
         </div>
       </header>
