@@ -602,6 +602,10 @@ button:focus-visible {
   border-bottom: 1px solid var(--border);
 }
 
+.ai-bar[hidden] {
+  display: none;
+}
+
 .ai-group {
   display: flex;
   align-items: center;
