@@ -1,4 +1,4 @@
-import { insertAtCursor } from "./editor";
+import { insertAtCursor, pushAiModeUndo } from "./editor";
 
 let aiModeBound = false;
 
@@ -13,8 +13,10 @@ export function bindAiMode(): void {
 
   toggle.addEventListener('click', () => {
     const expanded = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!expanded));
+    const newExpanded = !expanded;
+    toggle.setAttribute('aria-expanded', String(newExpanded));
     aiBar.hidden = expanded;
+    pushAiModeUndo(newExpanded);
   });
 
   aiBar.addEventListener('click', (event) => {

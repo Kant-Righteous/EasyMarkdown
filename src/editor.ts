@@ -6,8 +6,28 @@ export interface EditorSelection {
 
 type InputCallback = () => void;
 
+interface UiUndoEntry {
+  type: "ai-mode";
+  enabled: boolean;
+}
+
 const inputCallbacks = new Set<InputCallback>();
 let inputBound = false;
+const uiUndoStack: UiUndoEntry[] = [];
+const uiRedoStack: UiUndoEntry[] = [];
+
+export function pushAiModeUndo(enabled: boolean): void {
+  uiUndoStack.push({ type: "ai-mode", enabled });
+  uiRedoStack.length = 0;
+}
+
+function applyAiModeUndo(entry: UiUndoEntry): void {
+  const toggle = document.getElementById("ai-mode-toggle") as HTMLButtonElement | null;
+  const aiBar = document.getElementById("ai-bar");
+  if (!toggle || !aiBar) return;
+  toggle.setAttribute("aria-expanded", String(entry.enabled));
+  aiBar.hidden = !entry.enabled;
+}
 
 function editor(): HTMLTextAreaElement {
   const element = document.querySelector<HTMLTextAreaElement>("#editor");
@@ -80,10 +100,22 @@ function runHistoryCommand(command: "undo" | "redo"): void {
 }
 
 export function undo(): void {
+  if (uiUndoStack.length > 0) {
+    const entry = uiUndoStack.pop()!;
+    uiRedoStack.push(entry);
+    applyAiModeUndo({ ...entry, enabled: !entry.enabled });
+    return;
+  }
   runHistoryCommand("undo");
 }
 
 export function redo(): void {
+  if (uiRedoStack.length > 0) {
+    const entry = uiRedoStack.pop()!;
+    uiUndoStack.push(entry);
+    applyAiModeUndo(entry);
+    return;
+  }
   runHistoryCommand("redo");
 }
 
