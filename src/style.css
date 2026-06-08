@@ -127,8 +127,7 @@ button:focus-visible {
 }
 
 .menu-caret {
-  color: var(--text-faint);
-  font-size: 10px;
+  display: none;
 }
 
 .menu-trigger[aria-expanded="true"] .menu-caret {
@@ -418,6 +417,7 @@ button:focus-visible {
 .workspace.view-edit,
 .workspace.view-preview {
   grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
 }
 
 .workspace.view-edit .preview-pane,
@@ -514,6 +514,21 @@ button:focus-visible {
   border: 0;
 }
 
+@media (max-width: 960px) {
+  .button-shortcut {
+    display: none;
+  }
+
+  .menu-trigger {
+    padding-inline: 8px;
+  }
+
+  .view-switcher button {
+    min-width: 46px;
+    padding-inline: 7px;
+  }
+}
+
 @media (max-width: 860px) {
   .menu-bar {
     gap: 8px;
@@ -546,10 +561,21 @@ button:focus-visible {
 @media (max-width: 780px) {
   .menu-bar {
     padding-inline: 6px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .dropdown-menus {
+    flex: 1;
+    min-width: 0;
   }
 
   .menu-trigger {
     padding-inline: 8px;
+  }
+
+  .view-switcher {
+    flex-shrink: 0;
   }
 
   .view-switcher button {
@@ -560,6 +586,57 @@ button:focus-visible {
   .format-bar {
     padding-inline: 6px;
   }
+
+  .format-group button {
+    min-width: 28px;
+    padding-inline: 4px;
+  }
+}
+
+/* AI 对话模式 */
+.ai-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+.ai-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.ai-toggle input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.ai-bar {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background: var(--bg-toolbar);
+  border-bottom: 1px solid var(--border);
+}
+
+.ai-group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.ai-bar button {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-surface);
+  cursor: pointer;
+  font-size: 0.8125rem;
+}
+
+.ai-bar button:hover {
+  background: var(--bg-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
