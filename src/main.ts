@@ -1,10 +1,12 @@
 import "./style.css";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { ask } from "@tauri-apps/plugin-dialog";
 import { getContent, onEditorInput, setContent } from "./editor";
 import { renderMarkdown } from "./markdown";
 import { bindShortcuts } from "./shortcuts";
 import { getState, subscribe, updateDirtyState } from "./state";
 import { bindToolbar } from "./toolbar";
+import { bindAiMode } from "./ai-mode";
 import { applyViewMode } from "./view";
 
 let previewTimer: number | undefined;
@@ -48,6 +50,7 @@ function updateChrome(): void {
 window.addEventListener("DOMContentLoaded", () => {
   bindToolbar();
   bindShortcuts();
+  bindAiMode();
   subscribe(updateChrome);
   applyViewMode(getState().viewMode);
 
@@ -62,10 +65,23 @@ window.addEventListener("DOMContentLoaded", () => {
   updatePreview();
   updateChrome();
 
-  window.addEventListener("beforeunload", (event) => {
-    if (getState().isDirty) {
-      event.preventDefault();
-      event.returnValue = "";
+  getCurrentWindow().onCloseRequested(async (event) => {
+    if (!getState().isDirty) return;
+
+    event.preventDefault();
+    const saveFirst = await ask("文件尚未保存，是否保存后关闭？", {
+      title: "未保存的更改",
+      kind: "warning",
+    });
+
+    if (saveFirst) {
+      const { saveFile } = await import("./file");
+      const saved = await saveFile();
+      if (saved) {
+        await getCurrentWindow().destroy();
+      }
+    } else {
+      await getCurrentWindow().destroy();
     }
   });
 
