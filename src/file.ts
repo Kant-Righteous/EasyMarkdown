@@ -1,7 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { open, save } from "@tauri-apps/plugin-dialog";
+import { message, open, save } from "@tauri-apps/plugin-dialog";
 import { getContent, setContent } from "./editor";
+import { getOpenDecision } from "./openFlow";
+import { addRecentFile, removeRecentFile } from "./recentFiles";
 import { getState, setState, updateDirtyState } from "./state";
 
 const markdownFilters = [
@@ -35,6 +37,54 @@ function showError(action: string, error: unknown): void {
   window.alert(`${action}失败：${message}`);
 }
 
+async function prepareForOpen(): Promise<boolean> {
+  if (!getState().isDirty) return true;
+
+  const result = await message("当前文件有未保存的修改。", {
+    title: "打开文件",
+    kind: "warning",
+    buttons: {
+      yes: "保存并打开",
+      no: "不保存并打开",
+      cancel: "取消打开",
+    },
+  });
+
+  const decision = getOpenDecision(result);
+  if (decision === "cancel") return false;
+  return decision === "discard" || (await saveFile());
+}
+
+async function loadFile(path: string): Promise<void> {
+  const content = await invoke<string>("read_file", { path });
+  setContent(content);
+  setState({
+    currentFilePath: path,
+    currentFileName: fileNameFromPath(path),
+    lastSavedContent: content,
+  });
+  updateDirtyState(getContent());
+  addRecentFile(path);
+  await updateWindowTitle();
+}
+
+export async function openPathInCurrentWindow(
+  path: string,
+  options: { confirmUnsaved?: boolean; removeOnFailure?: boolean } = {},
+): Promise<boolean> {
+  const { confirmUnsaved = true, removeOnFailure = false } = options;
+  if (confirmUnsaved && !(await prepareForOpen())) return false;
+
+  try {
+    await loadFile(path);
+    return true;
+  } catch (error) {
+    if (removeOnFailure) removeRecentFile(path);
+    showError("打开文件", error);
+    return false;
+  }
+}
+
 export async function newFile(): Promise<void> {
   if (!confirmDiscardChanges()) return;
 
@@ -49,8 +99,6 @@ export async function newFile(): Promise<void> {
 }
 
 export async function openFile(): Promise<void> {
-  if (!confirmDiscardChanges()) return;
-
   const path = await open({
     multiple: false,
     directory: false,
@@ -58,19 +106,7 @@ export async function openFile(): Promise<void> {
   });
   if (!path) return;
 
-  try {
-    const content = await invoke<string>("read_file", { path });
-    setContent(content);
-    setState({
-      currentFilePath: path,
-      currentFileName: fileNameFromPath(path),
-      lastSavedContent: content,
-    });
-    updateDirtyState(getContent());
-    await updateWindowTitle();
-  } catch (error) {
-    showError("打开文件", error);
-  }
+  await openPathInCurrentWindow(path);
 }
 
 async function writeCurrentFile(path: string): Promise<boolean> {
@@ -83,6 +119,7 @@ async function writeCurrentFile(path: string): Promise<boolean> {
       currentFileName: fileNameFromPath(path),
       lastSavedContent: content,
     });
+    addRecentFile(path);
     updateDirtyState(getContent());
     await updateWindowTitle();
     return true;

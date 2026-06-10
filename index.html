@@ -29,6 +29,23 @@
                 <button type="button" data-command="open" role="menuitem">
                   <span>打开</span>
                 </button>
+                <div class="submenu">
+                  <button
+                    type="button"
+                    class="submenu-trigger"
+                    aria-haspopup="menu"
+                    aria-expanded="false"
+                  >
+                    <span>最近打开</span>
+                    <span class="submenu-arrow" aria-hidden="true">›</span>
+                  </button>
+                  <div
+                    class="dropdown-panel submenu-panel recent-files-panel"
+                    id="recent-files-menu"
+                    role="menu"
+                    hidden
+                  ></div>
+                </div>
                 <button type="button" data-command="save" role="menuitem">
                   <span>保存</span>
                   <span class="shortcut-hint">Ctrl+S</span>

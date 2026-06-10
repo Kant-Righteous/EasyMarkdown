@@ -186,6 +186,56 @@ button:focus-visible {
   background: var(--border);
 }
 
+.submenu {
+  position: relative;
+}
+
+.submenu-panel {
+  top: -6px;
+  left: calc(100% + 2px);
+}
+
+.recent-files-panel {
+  width: 240px;
+  overflow: visible;
+}
+
+.recent-action-panel {
+  width: 190px;
+}
+
+.recent-file-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.submenu-arrow {
+  flex: none;
+  margin-left: 10px;
+  color: var(--text-faint);
+}
+
+.submenu-trigger[aria-expanded="true"] {
+  color: var(--text);
+  background: var(--bg-hover);
+}
+
+.submenu-trigger[aria-expanded="true"] .submenu-arrow {
+  color: var(--text-muted);
+}
+
+.submenu-panel button {
+  min-height: 32px;
+}
+
+.menu-empty {
+  padding: 8px 9px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
 .view-switcher {
   gap: 2px;
   padding: 2px;

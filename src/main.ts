@@ -7,6 +7,8 @@ import { bindShortcuts } from "./shortcuts";
 import { getState, subscribe, updateDirtyState } from "./state";
 import { bindToolbar } from "./toolbar";
 import { bindAiMode } from "./ai-mode";
+import { openPathInCurrentWindow, saveFile } from "./file";
+import { parseOpenFilePath } from "./openFlow";
 import { applyViewMode } from "./view";
 import { getCloseAction } from "./close";
 
@@ -66,6 +68,14 @@ window.addEventListener("DOMContentLoaded", () => {
   updatePreview();
   updateChrome();
 
+  const startupPath = parseOpenFilePath(window.location.search);
+  if (startupPath) {
+    void openPathInCurrentWindow(startupPath, {
+      confirmUnsaved: false,
+      removeOnFailure: true,
+    });
+  }
+
   getCurrentWindow().onCloseRequested(async (event) => {
     const isDirty = getState().isDirty;
     if (getCloseAction(isDirty) === "default") return;
@@ -78,7 +88,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     let saveSucceeded: boolean | undefined;
     if (saveFirst) {
-      const { saveFile } = await import("./file");
       saveSucceeded = await saveFile();
     }
 
