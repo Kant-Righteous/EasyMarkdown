@@ -1,7 +1,7 @@
 import "./style.css";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { ask } from "@tauri-apps/plugin-dialog";
+import { message } from "@tauri-apps/plugin-dialog";
 import { getContent, onEditorInput, setContent } from "./editor";
 import { renderMarkdown } from "./markdown";
 import { bindShortcuts } from "./shortcuts";
@@ -11,16 +11,21 @@ import { bindAiMode } from "./ai-mode";
 import { openPathInCurrentWindow, saveFile } from "./file";
 import { parseOpenFilePath } from "./openFlow";
 import { applyViewMode } from "./view";
-import { getCloseAction } from "./close";
+import { getCloseAction, getCloseDecision } from "./close";
 import { initI18n, subscribeLanguage, t } from "./i18n";
 import { bindPreviewLinks } from "./previewLinks";
+import { bindSplitScrollSync } from "./scrollSync";
+import { runPdfExportWindow } from "./exportPdf";
+import { bindContentZoom } from "./previewZoom";
 
 let previewTimer: number | undefined;
+let syncPreviewScroll = (): void => {};
 
 function updatePreview(): void {
   const preview = document.querySelector<HTMLElement>("#preview");
   if (preview) {
     preview.innerHTML = renderMarkdown(getContent());
+    syncPreviewScroll();
   }
 }
 
@@ -54,6 +59,8 @@ function updateChrome(): void {
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
+  if (await runPdfExportWindow()) return;
+
   let installerLanguage: string | null = null;
   try {
     installerLanguage = await invoke<string | null>("take_installer_language");
@@ -68,6 +75,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   bindShortcuts();
   bindAiMode();
   bindPreviewLinks();
+  bindContentZoom();
+  syncPreviewScroll = bindSplitScrollSync();
   subscribe(updateChrome);
   subscribeLanguage(() => {
     if (!getState().currentFilePath) {
@@ -102,17 +111,28 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (getCloseAction(isDirty) === "default") return;
 
     event.preventDefault();
-    const saveFirst = await ask(t("close.message"), {
+    const saveLabel = t("close.saveAndClose");
+    const discardLabel = t("close.discardAndClose");
+    const result = await message(t("close.message"), {
       title: t("close.title"),
       kind: "warning",
+      buttons: {
+        yes: saveLabel,
+        no: discardLabel,
+        cancel: t("close.cancel"),
+      },
+    });
+    const decision = getCloseDecision(result, {
+      save: saveLabel,
+      discard: discardLabel,
     });
 
     let saveSucceeded: boolean | undefined;
-    if (saveFirst) {
+    if (decision === "save") {
       saveSucceeded = await saveFile();
     }
 
-    if (getCloseAction(isDirty, saveFirst, saveSucceeded) === "destroy") {
+    if (getCloseAction(isDirty, decision, saveSucceeded) === "destroy") {
       await getCurrentWindow().destroy();
     }
   });

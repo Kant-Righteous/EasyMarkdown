@@ -229,6 +229,45 @@
       <footer class="statusbar">
         <span id="status-path" data-i18n="status.unsavedFile">未保存文件</span>
         <span class="status-right">
+          <span
+            class="zoom-controls"
+            role="group"
+            aria-label="内容缩放"
+            data-i18n-aria-label="zoom.group"
+          >
+            <input
+              id="zoom-value"
+              type="text"
+              value="100%"
+              inputmode="numeric"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="缩放百分比"
+              data-i18n-aria-label="zoom.value"
+            />
+            <button
+              type="button"
+              data-zoom-action="decrease"
+              title="缩小"
+              data-i18n-title="zoom.decrease"
+              aria-label="缩小"
+              data-i18n-aria-label="zoom.decrease"
+            >−</button>
+            <button
+              type="button"
+              data-zoom-action="increase"
+              title="放大"
+              data-i18n-title="zoom.increase"
+              aria-label="放大"
+              data-i18n-aria-label="zoom.increase"
+            >+</button>
+            <button
+              type="button"
+              class="zoom-reset"
+              data-zoom-action="reset"
+              data-i18n="zoom.reset"
+            >重置</button>
+          </span>
           <span class="status-item" id="status-dirty" data-i18n="status.saved">已保存</span>
           <span class="status-item status-mode" id="status-mode" data-i18n="view.split">分屏</span>
         </span>

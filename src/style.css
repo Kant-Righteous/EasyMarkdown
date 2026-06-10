@@ -1,4 +1,5 @@
 :root {
+  --content-zoom: 1;
   --bg-app: oklch(0.955 0 0);
   --bg-toolbar: oklch(0.985 0 0);
   --bg-surface: oklch(1 0 0);
@@ -328,7 +329,12 @@ button:focus-visible {
 }
 
 .format-group button[data-command="bold"],
-.format-group button[data-command="italic"],
+.format-group button[data-command="italic"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .format-group button[data-command="link"] {
   display: inline-flex;
   gap: 6px;
@@ -372,7 +378,7 @@ button:focus-visible {
   background: var(--bg-surface);
   caret-color: oklch(0.15 0 0);
   font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
-  font-size: 15px;
+  font-size: calc(15px * var(--content-zoom));
   line-height: 1.72;
   tab-size: 2;
 }
@@ -391,12 +397,13 @@ button:focus-visible {
   padding: 26px 34px 64px;
   color: var(--text);
   background: var(--bg-surface);
-  font-size: 15px;
+  font-size: calc(15px * var(--content-zoom));
   line-height: 1.75;
 }
 
 #preview > * {
-  max-width: 74ch;
+  width: min(100%, 74ch);
+  max-width: 100%;
   margin-right: auto;
   margin-left: auto;
 }
@@ -415,7 +422,7 @@ button:focus-visible {
 
 #preview h1 {
   margin-top: 1.2em;
-  font-size: 1.8rem;
+  font-size: 1.8em;
   letter-spacing: -0.025em;
 }
 
@@ -423,17 +430,22 @@ button:focus-visible {
   margin-top: 1.7em;
   padding-bottom: 0.35em;
   border-bottom: 1px solid var(--border);
-  font-size: 1.42rem;
+  font-size: 1.42em;
 }
 
 #preview h3 {
   margin-top: 1.55em;
-  font-size: 1.16rem;
+  font-size: 1.16em;
 }
 
 #preview p,
 #preview li {
   text-wrap: pretty;
+}
+
+#preview em {
+  font-style: italic;
+  font-synthesis: style;
 }
 
 #preview a {
@@ -443,6 +455,8 @@ button:focus-visible {
 }
 
 #preview blockquote {
+  width: min(100%, 74ch);
+  max-width: 100%;
   margin-top: 1.3em;
   margin-bottom: 1.3em;
   padding: 10px 14px;
@@ -460,15 +474,20 @@ button:focus-visible {
 }
 
 #preview pre {
-  overflow: auto;
+  max-width: 100%;
+  overflow-x: auto;
   padding: 15px 17px;
   border-radius: 8px;
   background: oklch(0.94 0 0);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 #preview pre code {
   padding: 0;
   background: transparent;
+  white-space: inherit;
 }
 
 #preview table {
@@ -488,7 +507,11 @@ button:focus-visible {
 }
 
 #preview img {
+  display: block;
+  height: auto;
   max-width: 100%;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .workspace.view-edit,
@@ -530,6 +553,54 @@ button:focus-visible {
   display: flex;
   flex: none;
   gap: 7px;
+  align-items: center;
+}
+
+.zoom-controls {
+  display: inline-flex;
+  gap: 2px;
+  align-items: center;
+  min-height: 24px;
+  padding: 1px 2px 1px 7px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-surface);
+}
+
+#zoom-value {
+  width: 44px;
+  min-width: 44px;
+  height: 22px;
+  padding: 1px 3px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+#zoom-value:focus {
+  border-color: var(--accent);
+  background: var(--bg);
+}
+
+.zoom-controls button {
+  min-width: 26px;
+  min-height: 22px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.zoom-controls .zoom-reset {
+  min-width: 44px;
+  padding-inline: 8px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .status-item {

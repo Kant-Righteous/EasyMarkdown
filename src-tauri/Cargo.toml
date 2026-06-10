@@ -1,6 +1,6 @@
 [package]
 name = "easymarkdown"
-version = "0.1.1"
+version = "1.0.0"
 description = "A lightweight local Markdown editor"
 authors = ["you"]
 edition = "2021"
@@ -26,3 +26,5 @@ tauri-plugin-dialog = "2"
 
 [target.'cfg(windows)'.dependencies]
 winreg = "0.55"
+webview2-com = "0.38"
+windows = "0.61"
