@@ -1,4 +1,3 @@
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import {
   blockquote,
   bold,
@@ -16,11 +15,11 @@ import {
   newFile,
   openFile,
   openPathInCurrentWindow,
+  openPathInNewWindow,
   saveAsFile,
   saveFile,
 } from "./file";
 import { redo, undo } from "./editor";
-import { buildOpenFileUrl, createRecentWindowLabel } from "./openFlow";
 import {
   bindRecentFilesStorageSync,
   clearRecentFiles,
@@ -196,23 +195,6 @@ function renderRecentFiles(
   menu.append(separator, clear);
 }
 
-function openInNewWindow(path: string): void {
-  const windowLabel = createRecentWindowLabel();
-  const webview = new WebviewWindow(windowLabel, {
-    url: buildOpenFileUrl(path),
-    title: `${path.split(/[\\/]/).pop() || path} - EasyMarkdown`,
-    width: 1200,
-    height: 760,
-    minWidth: 760,
-    minHeight: 500,
-  });
-  void webview.once("tauri://error", (event) => {
-    window.alert(
-      t("recent.newWindowFailed", { message: String(event.payload) }),
-    );
-  });
-}
-
 export function bindToolbar(): void {
   if (toolbarBound) return;
   toolbarBound = true;
@@ -282,7 +264,7 @@ export function bindToolbar(): void {
       } else if (action === "current" && path) {
         void openPathInCurrentWindow(path, { removeOnFailure: true });
       } else if (action === "new" && path) {
-        openInNewWindow(path);
+        openPathInNewWindow(path);
       }
       return;
     }

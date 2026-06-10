@@ -4,6 +4,7 @@ import {
   buildOpenFileUrl,
   createRecentWindowLabel,
   getOpenDecision,
+  getOpenTarget,
   parseOpenFilePath,
 } from "../src/openFlow.ts";
 
@@ -13,6 +14,17 @@ test("将弹窗结果映射为打开决策", () => {
   assert.equal(getOpenDecision("Open Without Saving", labels), "discard");
   assert.equal(getOpenDecision("Cancel", labels), "cancel");
   assert.equal(getOpenDecision("Unknown", labels), "cancel");
+});
+
+test("将打开方式弹窗结果映射为当前窗口、新窗口或取消", () => {
+  const labels = {
+    current: "Open in Current Window",
+    newWindow: "Open in New Window",
+  };
+  assert.equal(getOpenTarget("Open in Current Window", labels), "current");
+  assert.equal(getOpenTarget("Open in New Window", labels), "new");
+  assert.equal(getOpenTarget("Cancel", labels), "cancel");
+  assert.equal(getOpenTarget("Unknown", labels), "cancel");
 });
 
 test("新窗口 URL 可无损传递文件路径", () => {

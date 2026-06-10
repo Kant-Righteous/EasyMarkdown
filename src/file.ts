@@ -1,8 +1,14 @@
 import { invoke } from "@tauri-apps/api/core";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { message, open, save } from "@tauri-apps/plugin-dialog";
 import { getContent, setContent } from "./editor";
-import { getOpenDecision } from "./openFlow";
+import {
+  buildOpenFileUrl,
+  createRecentWindowLabel,
+  getOpenDecision,
+  getOpenTarget,
+} from "./openFlow";
 import { addRecentFile, removeRecentFile } from "./recentFiles";
 import { getState, setState, updateDirtyState } from "./state";
 import { t } from "./i18n";
@@ -107,6 +113,22 @@ export async function newFile(): Promise<void> {
 }
 
 export async function openFile(): Promise<void> {
+  const currentLabel = t("file.openCurrentWindow");
+  const newWindowLabel = t("file.openNewWindow");
+  const result = await message(t("file.openTargetMessage"), {
+    title: t("file.openTitle"),
+    buttons: {
+      yes: currentLabel,
+      no: newWindowLabel,
+      cancel: t("file.cancelOpen"),
+    },
+  });
+  const target = getOpenTarget(result, {
+    current: currentLabel,
+    newWindow: newWindowLabel,
+  });
+  if (target === "cancel") return;
+
   const path = await open({
     multiple: false,
     directory: false,
@@ -114,7 +136,28 @@ export async function openFile(): Promise<void> {
   });
   if (!path) return;
 
-  await openPathInCurrentWindow(path);
+  if (target === "current") {
+    await openPathInCurrentWindow(path);
+  } else {
+    openPathInNewWindow(path);
+  }
+}
+
+export function openPathInNewWindow(path: string): void {
+  const windowLabel = createRecentWindowLabel();
+  const webview = new WebviewWindow(windowLabel, {
+    url: buildOpenFileUrl(path),
+    title: `${path.split(/[\\/]/).pop() || path} - EasyMarkdown`,
+    width: 1200,
+    height: 760,
+    minWidth: 760,
+    minHeight: 500,
+  });
+  void webview.once("tauri://error", (event) => {
+    window.alert(
+      t("recent.newWindowFailed", { message: String(event.payload) }),
+    );
+  });
 }
 
 async function writeCurrentFile(path: string): Promise<boolean> {

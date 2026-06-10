@@ -1,4 +1,5 @@
 import "./style.css";
+import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ask } from "@tauri-apps/plugin-dialog";
 import { getContent, onEditorInput, setContent } from "./editor";
@@ -52,8 +53,14 @@ function updateChrome(): void {
   );
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  initI18n();
+window.addEventListener("DOMContentLoaded", async () => {
+  let installerLanguage: string | null = null;
+  try {
+    installerLanguage = await invoke<string | null>("take_installer_language");
+  } catch {
+    // Development in a regular browser falls back to the system language.
+  }
+  initI18n(installerLanguage);
   if (!getState().currentFilePath) {
     setState({ currentFileName: t("file.untitled") });
   }

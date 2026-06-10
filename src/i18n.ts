@@ -66,6 +66,9 @@ const translations: Record<Language, Record<string, string>> = {
     "file.discardConfirm": "当前内容尚未保存。确定要放弃这些修改吗？",
     "file.unsavedMessage": "当前文件有未保存的修改。",
     "file.openTitle": "打开文件",
+    "file.openTargetMessage": "请选择在哪里打开文件。",
+    "file.openCurrentWindow": "在当前窗口打开",
+    "file.openNewWindow": "在新窗口打开",
     "file.saveAndOpen": "保存并打开",
     "file.discardAndOpen": "不保存并打开",
     "file.cancelOpen": "取消打开",
@@ -159,6 +162,9 @@ const translations: Record<Language, Record<string, string>> = {
     "file.discardConfirm": "This content has not been saved. Discard the changes?",
     "file.unsavedMessage": "The current file has unsaved changes.",
     "file.openTitle": "Open File",
+    "file.openTargetMessage": "Choose where to open the file.",
+    "file.openCurrentWindow": "Open in Current Window",
+    "file.openNewWindow": "Open in New Window",
     "file.saveAndOpen": "Save and Open",
     "file.discardAndOpen": "Open Without Saving",
     "file.cancelOpen": "Cancel",
@@ -253,6 +259,9 @@ const translations: Record<Language, Record<string, string>> = {
       "Ce contenu n'est pas enregistré. Abandonner les modifications ?",
     "file.unsavedMessage": "Le fichier actuel contient des modifications non enregistrées.",
     "file.openTitle": "Ouvrir un fichier",
+    "file.openTargetMessage": "Choisissez où ouvrir le fichier.",
+    "file.openCurrentWindow": "Ouvrir dans la fenêtre actuelle",
+    "file.openNewWindow": "Ouvrir dans une nouvelle fenêtre",
     "file.saveAndOpen": "Enregistrer et ouvrir",
     "file.discardAndOpen": "Ouvrir sans enregistrer",
     "file.cancelOpen": "Annuler",
@@ -313,14 +322,35 @@ export function normalizeLanguage(value: unknown): Language {
     : "zh-CN";
 }
 
+function isLanguage(value: unknown): value is Language {
+  return value === "en" || value === "fr" || value === "zh-CN";
+}
+
+function defaultSystemLocale(): string {
+  return typeof navigator === "undefined" ? "en-US" : navigator.language;
+}
+
+export function languageFromSystemLocale(locale: string): Language {
+  const normalizedLocale = locale.toLowerCase();
+  if (normalizedLocale === "zh-cn") return "zh-CN";
+  if (normalizedLocale === "fr-fr") return "fr";
+  return "en";
+}
+
 export function loadLanguage(
   storage: LanguageStorage | null = defaultStorage(),
+  systemLocale = defaultSystemLocale(),
+  installerLanguage: unknown = null,
 ): Language {
-  if (!storage) return "zh-CN";
+  if (isLanguage(installerLanguage)) return installerLanguage;
+  if (!storage) return languageFromSystemLocale(systemLocale);
   try {
-    return normalizeLanguage(storage.getItem(LANGUAGE_STORAGE_KEY));
+    const storedLanguage = storage.getItem(LANGUAGE_STORAGE_KEY);
+    return isLanguage(storedLanguage)
+      ? storedLanguage
+      : languageFromSystemLocale(systemLocale);
   } catch {
-    return "zh-CN";
+    return languageFromSystemLocale(systemLocale);
   }
 }
 
@@ -392,8 +422,12 @@ export function setLanguage(
   listeners.forEach((listener) => listener(currentLanguage));
 }
 
-export function initI18n(): Language {
-  const language = loadLanguage();
+export function initI18n(installerLanguage: unknown = null): Language {
+  const language = loadLanguage(
+    defaultStorage(),
+    defaultSystemLocale(),
+    installerLanguage,
+  );
   setLanguage(language);
   return language;
 }

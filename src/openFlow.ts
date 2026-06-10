@@ -1,4 +1,5 @@
 export type OpenDecision = "save" | "discard" | "cancel";
+export type OpenTarget = "current" | "new" | "cancel";
 
 export function getOpenDecision(
   result: string,
@@ -6,6 +7,15 @@ export function getOpenDecision(
 ): OpenDecision {
   if (result === labels.save) return "save";
   if (result === labels.discard) return "discard";
+  return "cancel";
+}
+
+export function getOpenTarget(
+  result: string,
+  labels: { current: string; newWindow: string },
+): OpenTarget {
+  if (result === labels.current) return "current";
+  if (result === labels.newWindow) return "new";
   return "cancel";
 }
 
