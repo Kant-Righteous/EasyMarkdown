@@ -28,6 +28,12 @@ import {
   subscribeRecentFiles,
 } from "./recentFiles";
 import { setViewMode } from "./view";
+import {
+  normalizeLanguage,
+  setLanguage,
+  subscribeLanguage,
+  t,
+} from "./i18n";
 
 const actions: Record<string, () => void | Promise<unknown>> = {
   new: newFile,
@@ -56,6 +62,7 @@ let toolbarBound = false;
 function closeSubmenus(): void {
   document.querySelectorAll<HTMLElement>(".submenu-panel").forEach((panel) => {
     panel.hidden = true;
+    panel.classList.remove("opens-left");
   });
   document
     .querySelectorAll<HTMLButtonElement>(".submenu-trigger")
@@ -104,13 +111,20 @@ function setSubmenuOpen(
   }
 
   panel.hidden = !shouldOpen;
+  panel.classList.remove("opens-left");
+  if (shouldOpen && panel.getBoundingClientRect().right > window.innerWidth - 8) {
+    panel.classList.add("opens-left");
+  }
   trigger.setAttribute("aria-expanded", String(shouldOpen));
 }
 
 function closeSubmenuTree(submenu: HTMLElement): void {
   submenu
     .querySelectorAll<HTMLElement>(".submenu-panel")
-    .forEach((panel) => (panel.hidden = true));
+    .forEach((panel) => {
+      panel.hidden = true;
+      panel.classList.remove("opens-left");
+    });
   submenu
     .querySelectorAll<HTMLButtonElement>(".submenu-trigger")
     .forEach((trigger) => trigger.setAttribute("aria-expanded", "false"));
@@ -134,7 +148,7 @@ function renderRecentFiles(
   if (paths.length === 0) {
     const empty = document.createElement("div");
     empty.className = "menu-empty";
-    empty.textContent = "暂无最近文件";
+    empty.textContent = t("recent.empty");
     menu.append(empty);
     return;
   }
@@ -163,10 +177,10 @@ function renderRecentFiles(
     actions.setAttribute("role", "menu");
     actions.hidden = true;
 
-    const current = createMenuButton("在当前窗口打开");
+    const current = createMenuButton(t("recent.openCurrent"));
     current.dataset.recentAction = "current";
     current.dataset.path = path;
-    const newWindow = createMenuButton("在新窗口打开");
+    const newWindow = createMenuButton(t("recent.openNew"));
     newWindow.dataset.recentAction = "new";
     newWindow.dataset.path = path;
     actions.append(current, newWindow);
@@ -177,7 +191,7 @@ function renderRecentFiles(
   const separator = document.createElement("div");
   separator.className = "menu-separator";
   separator.setAttribute("role", "separator");
-  const clear = createMenuButton("清空最近记录");
+  const clear = createMenuButton(t("recent.clear"));
   clear.dataset.recentAction = "clear";
   menu.append(separator, clear);
 }
@@ -193,7 +207,9 @@ function openInNewWindow(path: string): void {
     minHeight: 500,
   });
   void webview.once("tauri://error", (event) => {
-    window.alert(`创建新窗口失败：${String(event.payload)}`);
+    window.alert(
+      t("recent.newWindowFailed", { message: String(event.payload) }),
+    );
   });
 }
 
@@ -202,6 +218,7 @@ export function bindToolbar(): void {
   toolbarBound = true;
   renderRecentFiles();
   subscribeRecentFiles(renderRecentFiles);
+  subscribeLanguage(() => renderRecentFiles());
   bindRecentFilesStorageSync();
 
   const toolbar = document.querySelector<HTMLElement>("#toolbar");
@@ -242,6 +259,14 @@ export function bindToolbar(): void {
       target.closest<HTMLButtonElement>(".submenu-trigger");
     if (submenuTrigger) {
       setSubmenuOpen(submenuTrigger, true);
+      return;
+    }
+
+    const languageOption =
+      target.closest<HTMLButtonElement>("[data-language]");
+    if (languageOption) {
+      setLanguage(normalizeLanguage(languageOption.dataset.language));
+      closeMenus();
       return;
     }
 

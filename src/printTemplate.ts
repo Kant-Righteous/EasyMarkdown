@@ -1,4 +1,5 @@
 import printStyles from "./print.css?raw";
+import { getLanguage, t } from "./i18n";
 
 function escapeHtml(value: string): string {
   return value.replace(
@@ -19,7 +20,7 @@ export function buildPrintHtml(options: {
   bodyHtml: string;
 }): string {
   return `<!doctype html>
-<html lang="zh-CN">
+<html lang="${getLanguage()}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,7 +29,7 @@ export function buildPrintHtml(options: {
 </head>
 <body>
   <article class="markdown-print-body">${options.bodyHtml}</article>
-  <button class="print-button" onclick="window.print()">打印 / 保存为 PDF</button>
+  <button class="print-button" onclick="window.print()">${escapeHtml(t("print.action"))}</button>
   <script>
     window.addEventListener("load", function () {
       setTimeout(function () { window.print(); }, 300);

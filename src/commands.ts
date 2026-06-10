@@ -4,6 +4,11 @@ import {
   replaceSelection,
   wrapSelection,
 } from "./editor";
+import { t } from "./i18n";
+
+function defaultItems(): string {
+  return [t("command.item1"), t("command.item2"), t("command.item3")].join("\n");
+}
 
 function prefixLines(prefix: string, placeholder: string): void {
   const selection = getSelection();
@@ -18,7 +23,7 @@ function prefixLines(prefix: string, placeholder: string): void {
 
 function numberedLines(): void {
   const selection = getSelection();
-  const value = selection.text || "第一项\n第二项\n第三项";
+  const value = selection.text || defaultItems();
   replaceSelection(
     value
       .split("\n")
@@ -34,19 +39,19 @@ function insertBlock(content: string): void {
 }
 
 export function heading(level: 1 | 2 | 3): void {
-  prefixLines(`${"#".repeat(level)} `, "标题");
+  prefixLines(`${"#".repeat(level)} `, t("command.heading"));
 }
 
 export function bold(): void {
-  wrapSelection("**", "**", "加粗文字");
+  wrapSelection("**", "**", t("command.bold"));
 }
 
 export function italic(): void {
-  wrapSelection("*", "*", "斜体文字");
+  wrapSelection("*", "*", t("command.italic"));
 }
 
 export function unorderedList(): void {
-  prefixLines("- ", "第一项\n第二项\n第三项");
+  prefixLines("- ", defaultItems());
 }
 
 export function orderedList(): void {
@@ -54,20 +59,20 @@ export function orderedList(): void {
 }
 
 export function blockquote(): void {
-  prefixLines("> ", "引用内容");
+  prefixLines("> ", t("command.quote"));
 }
 
 export function codeBlock(): void {
-  wrapSelection("```text\n", "\n```", "代码内容");
+  wrapSelection("```text\n", "\n```", t("command.code"));
 }
 
 export function link(): void {
-  wrapSelection("[", "](https://example.com)", "链接文字");
+  wrapSelection("[", "](https://example.com)", t("command.link"));
 }
 
 export function table(): void {
   insertBlock(
-    "| 列1 | 列2 | 列3 |\n| --- | --- | --- |\n| 内容1 | 内容2 | 内容3 |",
+    `| ${t("command.column1")} | ${t("command.column2")} | ${t("command.column3")} |\n| --- | --- | --- |\n| ${t("command.content1")} | ${t("command.content2")} | ${t("command.content3")} |`,
   );
 }
 

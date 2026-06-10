@@ -1,3 +1,5 @@
+import { t } from "./i18n";
+
 export interface EditorSelection {
   start: number;
   end: number;
@@ -12,7 +14,7 @@ let inputBound = false;
 function editor(): HTMLTextAreaElement {
   const element = document.querySelector<HTMLTextAreaElement>("#editor");
   if (!element) {
-    throw new Error("找不到 Markdown 编辑器");
+    throw new Error(t("editor.notFound"));
   }
   return element;
 }

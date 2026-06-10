@@ -5,6 +5,7 @@ import { getContent, setContent } from "./editor";
 import { getOpenDecision } from "./openFlow";
 import { addRecentFile, removeRecentFile } from "./recentFiles";
 import { getState, setState, updateDirtyState } from "./state";
+import { t } from "./i18n";
 
 const markdownFilters = [
   {
@@ -14,7 +15,7 @@ const markdownFilters = [
 ];
 
 function fileNameFromPath(path: string): string {
-  return path.split(/[\\/]/).pop() || "未命名.md";
+  return path.split(/[\\/]/).pop() || t("file.untitled");
 }
 
 async function updateWindowTitle(): Promise<void> {
@@ -28,29 +29,36 @@ async function updateWindowTitle(): Promise<void> {
 function confirmDiscardChanges(): boolean {
   return (
     !getState().isDirty ||
-    window.confirm("当前内容尚未保存。确定要放弃这些修改吗？")
+    window.confirm(t("file.discardConfirm"))
   );
 }
 
 function showError(action: string, error: unknown): void {
-  const message = error instanceof Error ? error.message : String(error);
-  window.alert(`${action}失败：${message}`);
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  window.alert(
+    t("file.actionFailed", { action, message: errorMessage }),
+  );
 }
 
 async function prepareForOpen(): Promise<boolean> {
   if (!getState().isDirty) return true;
 
-  const result = await message("当前文件有未保存的修改。", {
-    title: "打开文件",
+  const saveLabel = t("file.saveAndOpen");
+  const discardLabel = t("file.discardAndOpen");
+  const result = await message(t("file.unsavedMessage"), {
+    title: t("file.openTitle"),
     kind: "warning",
     buttons: {
-      yes: "保存并打开",
-      no: "不保存并打开",
-      cancel: "取消打开",
+      yes: saveLabel,
+      no: discardLabel,
+      cancel: t("file.cancelOpen"),
     },
   });
 
-  const decision = getOpenDecision(result);
+  const decision = getOpenDecision(result, {
+    save: saveLabel,
+    discard: discardLabel,
+  });
   if (decision === "cancel") return false;
   return decision === "discard" || (await saveFile());
 }
@@ -80,7 +88,7 @@ export async function openPathInCurrentWindow(
     return true;
   } catch (error) {
     if (removeOnFailure) removeRecentFile(path);
-    showError("打开文件", error);
+    showError(t("file.openAction"), error);
     return false;
   }
 }
@@ -91,7 +99,7 @@ export async function newFile(): Promise<void> {
   setContent("");
   setState({
     currentFilePath: null,
-    currentFileName: "未命名.md",
+    currentFileName: t("file.untitled"),
     lastSavedContent: "",
   });
   updateDirtyState(getContent());
@@ -124,7 +132,7 @@ async function writeCurrentFile(path: string): Promise<boolean> {
     await updateWindowTitle();
     return true;
   } catch (error) {
-    showError("保存文件", error);
+    showError(t("file.saveAction"), error);
     return false;
   }
 }
@@ -137,7 +145,9 @@ export async function saveFile(): Promise<boolean> {
 export async function saveAsFile(): Promise<boolean> {
   const state = getState();
   const path = await save({
-    defaultPath: state.currentFileName,
+    defaultPath: state.currentFilePath
+      ? state.currentFileName
+      : t("file.untitled"),
     filters: markdownFilters,
   });
 

@@ -1,4 +1,5 @@
 import { insertAtCursor } from "./editor";
+import { t } from "./i18n";
 
 let aiModeBound = false;
 
@@ -24,9 +25,9 @@ export function bindAiMode(): void {
     const command = button.dataset.command;
 
     if (command === 'ai-prompt') {
-      insertAtCursor('## 👤 用户提示词\n\n');
+      insertAtCursor(`## ${t("ai.prompt")}\n\n`);
     } else if (command === 'ai-response') {
-      insertAtCursor('## 🤖 AI回答\n\n');
+      insertAtCursor(`## ${t("ai.response")}\n\n`);
     }
   });
 }

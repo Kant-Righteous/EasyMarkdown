@@ -8,10 +8,11 @@ import {
 } from "../src/openFlow.ts";
 
 test("将弹窗结果映射为打开决策", () => {
-  assert.equal(getOpenDecision("保存并打开"), "save");
-  assert.equal(getOpenDecision("不保存并打开"), "discard");
-  assert.equal(getOpenDecision("取消打开"), "cancel");
-  assert.equal(getOpenDecision("未知结果"), "cancel");
+  const labels = { save: "Save and Open", discard: "Open Without Saving" };
+  assert.equal(getOpenDecision("Save and Open", labels), "save");
+  assert.equal(getOpenDecision("Open Without Saving", labels), "discard");
+  assert.equal(getOpenDecision("Cancel", labels), "cancel");
+  assert.equal(getOpenDecision("Unknown", labels), "cancel");
 });
 
 test("新窗口 URL 可无损传递文件路径", () => {

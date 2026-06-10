@@ -9,7 +9,12 @@
   <body>
     <main class="app">
       <header class="app-header" id="toolbar">
-        <div class="menu-bar" role="toolbar" aria-label="文件、操作与视图菜单">
+        <div
+          class="menu-bar"
+          role="toolbar"
+          aria-label="文件、操作与视图菜单"
+          data-i18n-aria-label="app.toolbar"
+        >
           <div class="dropdown-menus">
             <div class="dropdown">
               <button
@@ -19,15 +24,15 @@
                 aria-haspopup="menu"
                 aria-expanded="false"
               >
-                文件
+                <span data-i18n="menu.file">文件</span>
                 <span class="menu-caret" aria-hidden="true">▾</span>
               </button>
               <div class="dropdown-panel" data-menu="file" role="menu" hidden>
                 <button type="button" data-command="new" role="menuitem">
-                  <span>新建</span>
+                  <span data-i18n="menu.new">新建</span>
                 </button>
                 <button type="button" data-command="open" role="menuitem">
-                  <span>打开</span>
+                  <span data-i18n="menu.open">打开</span>
                 </button>
                 <div class="submenu">
                   <button
@@ -36,7 +41,7 @@
                     aria-haspopup="menu"
                     aria-expanded="false"
                   >
-                    <span>最近打开</span>
+                    <span data-i18n="menu.recent">最近打开</span>
                     <span class="submenu-arrow" aria-hidden="true">›</span>
                   </button>
                   <div
@@ -47,15 +52,15 @@
                   ></div>
                 </div>
                 <button type="button" data-command="save" role="menuitem">
-                  <span>保存</span>
+                  <span data-i18n="menu.save">保存</span>
                   <span class="shortcut-hint">Ctrl+S</span>
                 </button>
                 <button type="button" data-command="save-as" role="menuitem">
-                  <span>另存为</span>
+                  <span data-i18n="menu.saveAs">另存为</span>
                 </button>
                 <div class="menu-separator" role="separator"></div>
                 <button type="button" data-command="export-pdf" role="menuitem">
-                  <span>导出 PDF</span>
+                  <span data-i18n="menu.exportPdf">导出 PDF</span>
                 </button>
               </div>
             </div>
@@ -68,18 +73,63 @@
                 aria-haspopup="menu"
                 aria-expanded="false"
               >
-                操作
+                <span data-i18n="menu.action">操作</span>
                 <span class="menu-caret" aria-hidden="true">▾</span>
               </button>
               <div class="dropdown-panel" data-menu="action" role="menu" hidden>
                 <button type="button" data-command="undo" role="menuitem">
-                  <span>撤销</span>
+                  <span data-i18n="menu.undo">撤销</span>
                   <span class="shortcut-hint">Ctrl+Z</span>
                 </button>
                 <button type="button" data-command="redo" role="menuitem">
-                  <span>重做</span>
+                  <span data-i18n="menu.redo">重做</span>
                   <span class="shortcut-hint">Ctrl+Y</span>
                 </button>
+                <div class="menu-separator" role="separator"></div>
+                <div class="submenu">
+                  <button
+                    type="button"
+                    class="submenu-trigger"
+                    aria-haspopup="menu"
+                    aria-expanded="false"
+                  >
+                    <span data-i18n="menu.language">语言</span>
+                    <span class="submenu-arrow" aria-hidden="true">›</span>
+                  </button>
+                  <div
+                    class="dropdown-panel submenu-panel language-panel"
+                    role="menu"
+                    hidden
+                  >
+                    <button
+                      type="button"
+                      class="language-option"
+                      data-language="zh-CN"
+                      role="menuitemradio"
+                      aria-checked="true"
+                    >
+                      <span data-i18n="language.zh-CN">中文</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="language-option"
+                      data-language="en"
+                      role="menuitemradio"
+                      aria-checked="false"
+                    >
+                      <span data-i18n="language.en">English</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="language-option"
+                      data-language="fr"
+                      role="menuitemradio"
+                      aria-checked="false"
+                    >
+                      <span data-i18n="language.fr">Français</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -89,28 +139,33 @@
               id="ai-mode-toggle"
               aria-expanded="false"
             >
-              AI对话保存模式
+              <span data-i18n="ai.mode">AI 对话保存模式</span>
             </button>
           </div>
 
-          <div class="view-switcher" role="group" aria-label="视图模式">
-            <button type="button" data-view="edit">编辑</button>
-            <button type="button" data-view="preview">预览</button>
-            <button type="button" data-view="split">分屏</button>
+          <div
+            class="view-switcher"
+            role="group"
+            aria-label="视图模式"
+            data-i18n-aria-label="view.group"
+          >
+            <button type="button" data-view="edit" data-i18n="view.edit">编辑</button>
+            <button type="button" data-view="preview" data-i18n="view.preview">预览</button>
+            <button type="button" data-view="split" data-i18n="view.split">分屏</button>
           </div>
         </div>
 
-        <div class="format-bar" role="toolbar" aria-label="Markdown 格式工具栏">
-          <div class="format-group" role="group" aria-label="标题">
-            <span class="format-label">标题</span>
-            <button type="button" data-command="h1" title="一级标题">H1</button>
-            <button type="button" data-command="h2" title="二级标题">H2</button>
-            <button type="button" data-command="h3" title="三级标题">H3</button>
+        <div class="format-bar" role="toolbar" aria-label="Markdown 格式工具栏" data-i18n-aria-label="format.toolbar">
+          <div class="format-group" role="group" aria-label="标题" data-i18n-aria-label="format.headingGroup">
+            <span class="format-label" data-i18n="format.heading">标题</span>
+            <button type="button" data-command="h1" title="一级标题" data-i18n-title="format.h1">H1</button>
+            <button type="button" data-command="h2" title="二级标题" data-i18n-title="format.h2">H2</button>
+            <button type="button" data-command="h3" title="三级标题" data-i18n-title="format.h3">H3</button>
           </div>
 
-          <div class="format-group" role="group" aria-label="文字强调">
-            <span class="format-label">强调</span>
-            <button type="button" data-command="bold" title="加粗">
+          <div class="format-group" role="group" aria-label="文字强调" data-i18n-aria-label="format.emphasisGroup">
+            <span class="format-label" data-i18n="format.emphasis">强调</span>
+            <button type="button" data-command="bold" title="加粗" data-i18n-title="format.bold">
               <strong>B</strong>
             </button>
             <button
@@ -118,38 +173,39 @@
               class="italic-button"
               data-command="italic"
               title="斜体"
+              data-i18n-title="format.italic"
             >
               <em>I</em>
             </button>
           </div>
 
-          <div class="format-group" role="group" aria-label="列表">
-            <span class="format-label">列表</span>
-            <button type="button" data-command="unordered-list">• 无序</button>
-            <button type="button" data-command="ordered-list">1. 有序</button>
+          <div class="format-group" role="group" aria-label="列表" data-i18n-aria-label="format.listGroup">
+            <span class="format-label" data-i18n="format.list">列表</span>
+            <button type="button" data-command="unordered-list" data-i18n="format.unordered">• 无序</button>
+            <button type="button" data-command="ordered-list" data-i18n="format.ordered">1. 有序</button>
           </div>
 
-          <div class="format-group" role="group" aria-label="块级格式">
-            <span class="format-label">块级</span>
-            <button type="button" data-command="blockquote">“ 引用</button>
-            <button type="button" data-command="code-block">&lt;/&gt; 代码</button>
+          <div class="format-group" role="group" aria-label="块级格式" data-i18n-aria-label="format.blockGroup">
+            <span class="format-label" data-i18n="format.block">块级</span>
+            <button type="button" data-command="blockquote" data-i18n="format.quote">“ 引用</button>
+            <button type="button" data-command="code-block" data-i18n="format.code">&lt;/&gt; 代码</button>
           </div>
 
-          <div class="format-group" role="group" aria-label="插入">
-            <span class="format-label">插入</span>
-            <button type="button" data-command="link" title="链接">
+          <div class="format-group" role="group" aria-label="插入" data-i18n-aria-label="format.insertGroup">
+            <span class="format-label" data-i18n="format.insert">插入</span>
+            <button type="button" data-command="link" title="链接" data-i18n-title="format.link" data-i18n="format.link">
               ↗ 链接
             </button>
-            <button type="button" data-command="table">▦ 表格</button>
-            <button type="button" data-command="horizontal-rule">— 横线</button>
+            <button type="button" data-command="table" data-i18n="format.table">▦ 表格</button>
+            <button type="button" data-command="horizontal-rule" data-i18n="format.rule">— 横线</button>
           </div>
         </div>
 
         <div class="ai-bar" id="ai-bar" hidden>
-          <div class="ai-group" role="group" aria-label="AI 对话模板">
-            <span class="format-label">AI 对话</span>
-            <button type="button" data-command="ai-prompt">👤 用户提示词</button>
-            <button type="button" data-command="ai-response">🤖 AI回答</button>
+          <div class="ai-group" role="group" aria-label="AI 对话模板" data-i18n-aria-label="ai.group">
+            <span class="format-label" data-i18n="ai.label">AI 对话</span>
+            <button type="button" data-command="ai-prompt" data-i18n="ai.prompt">👤 用户提示词</button>
+            <button type="button" data-command="ai-response" data-i18n="ai.response">🤖 AI 回答</button>
           </div>
         </div>
       </header>
@@ -159,20 +215,22 @@
           <textarea
             id="editor"
             aria-label="Markdown 编辑区"
+            data-i18n-aria-label="editor.label"
             spellcheck="false"
             placeholder="在这里输入 Markdown..."
+            data-i18n-placeholder="editor.placeholder"
           ></textarea>
         </div>
         <div class="preview-pane">
-          <article id="preview" aria-label="Markdown 预览区"></article>
+          <article id="preview" aria-label="Markdown 预览区" data-i18n-aria-label="preview.label"></article>
         </div>
       </section>
 
       <footer class="statusbar">
-        <span id="status-path">未保存文件</span>
+        <span id="status-path" data-i18n="status.unsavedFile">未保存文件</span>
         <span class="status-right">
-          <span class="status-item" id="status-dirty">已保存</span>
-          <span class="status-item status-mode" id="status-mode">分屏</span>
+          <span class="status-item" id="status-dirty" data-i18n="status.saved">已保存</span>
+          <span class="status-item status-mode" id="status-mode" data-i18n="view.split">分屏</span>
         </span>
       </footer>
     </main>

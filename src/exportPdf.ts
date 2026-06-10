@@ -2,6 +2,7 @@ import { getContent } from "./editor";
 import { renderMarkdown } from "./markdown";
 import { buildPrintHtml } from "./printTemplate";
 import { getState } from "./state";
+import { t } from "./i18n";
 
 function showPrintFallback(html: string): void {
   document.querySelector(".print-fallback")?.remove();
@@ -14,11 +15,11 @@ function showPrintFallback(html: string): void {
 
   const closeButton = document.createElement("button");
   closeButton.type = "button";
-  closeButton.textContent = "关闭打印预览";
+  closeButton.textContent = t("print.closePreview");
   closeButton.addEventListener("click", () => container.remove());
 
   const iframe = document.createElement("iframe");
-  iframe.title = "PDF 打印预览";
+  iframe.title = t("print.previewTitle");
   iframe.srcdoc = html;
 
   header.append(closeButton);

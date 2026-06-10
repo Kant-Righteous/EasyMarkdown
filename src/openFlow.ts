@@ -1,8 +1,11 @@
 export type OpenDecision = "save" | "discard" | "cancel";
 
-export function getOpenDecision(result: string): OpenDecision {
-  if (result === "保存并打开") return "save";
-  if (result === "不保存并打开") return "discard";
+export function getOpenDecision(
+  result: string,
+  labels: { save: string; discard: string },
+): OpenDecision {
+  if (result === labels.save) return "save";
+  if (result === labels.discard) return "discard";
   return "cancel";
 }
 

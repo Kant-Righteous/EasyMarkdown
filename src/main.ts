@@ -4,13 +4,15 @@ import { ask } from "@tauri-apps/plugin-dialog";
 import { getContent, onEditorInput, setContent } from "./editor";
 import { renderMarkdown } from "./markdown";
 import { bindShortcuts } from "./shortcuts";
-import { getState, subscribe, updateDirtyState } from "./state";
+import { getState, setState, subscribe, updateDirtyState } from "./state";
 import { bindToolbar } from "./toolbar";
 import { bindAiMode } from "./ai-mode";
 import { openPathInCurrentWindow, saveFile } from "./file";
 import { parseOpenFilePath } from "./openFlow";
 import { applyViewMode } from "./view";
 import { getCloseAction } from "./close";
+import { initI18n, subscribeLanguage, t } from "./i18n";
+import { bindPreviewLinks } from "./previewLinks";
 
 let previewTimer: number | undefined;
 
@@ -27,16 +29,16 @@ function updateChrome(): void {
   const dirty = document.querySelector<HTMLElement>("#status-dirty");
   const mode = document.querySelector<HTMLElement>("#status-mode");
 
-  if (path) path.textContent = state.currentFilePath ?? "未保存文件";
+  if (path) path.textContent = state.currentFilePath ?? t("status.unsavedFile");
   if (dirty) {
-    dirty.textContent = state.isDirty ? "未保存" : "已保存";
+    dirty.textContent = state.isDirty ? t("status.unsaved") : t("status.saved");
     dirty.classList.toggle("is-dirty", state.isDirty);
   }
   if (mode) {
     mode.textContent = {
-      edit: "编辑",
-      preview: "预览",
-      split: "分屏",
+      edit: t("view.edit"),
+      preview: t("view.preview"),
+      split: t("view.split"),
     }[state.viewMode];
   }
 
@@ -51,10 +53,22 @@ function updateChrome(): void {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+  initI18n();
+  if (!getState().currentFilePath) {
+    setState({ currentFileName: t("file.untitled") });
+  }
   bindToolbar();
   bindShortcuts();
   bindAiMode();
+  bindPreviewLinks();
   subscribe(updateChrome);
+  subscribeLanguage(() => {
+    if (!getState().currentFilePath) {
+      setState({ currentFileName: t("file.untitled") });
+    } else {
+      updateChrome();
+    }
+  });
   applyViewMode(getState().viewMode);
 
   onEditorInput(() => {
@@ -81,8 +95,8 @@ window.addEventListener("DOMContentLoaded", () => {
     if (getCloseAction(isDirty) === "default") return;
 
     event.preventDefault();
-    const saveFirst = await ask("文件尚未保存，是否保存后关闭？", {
-      title: "未保存的更改",
+    const saveFirst = await ask(t("close.message"), {
+      title: t("close.title"),
       kind: "warning",
     });
 
