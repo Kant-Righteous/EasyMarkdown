@@ -10,6 +10,12 @@ import {
   getOpenTarget,
 } from "./openFlow";
 import { addRecentFile, removeRecentFile } from "./recentFiles";
+import {
+  createSaveQueue,
+  getSaveAsDefaultPath,
+  performSave,
+  type WriteConfirmation,
+} from "./saveFlow";
 import { getState, setState, updateDirtyState } from "./state";
 import { t } from "./i18n";
 
@@ -19,6 +25,8 @@ const markdownFilters = [
     extensions: ["md", "markdown", "txt"],
   },
 ];
+
+const enqueueSave = createSaveQueue();
 
 function fileNameFromPath(path: string): string {
   return path.split(/[\\/]/).pop() || t("file.untitled");
@@ -160,39 +168,56 @@ export function openPathInNewWindow(path: string): void {
   });
 }
 
-async function writeCurrentFile(path: string): Promise<boolean> {
-  const content = getContent();
+async function runSave(forceSaveAs: boolean): Promise<boolean> {
+  const state = getState();
+  const outcome = await performSave({
+    path: forceSaveAs ? null : state.currentFilePath,
+    selectPath: () =>
+      save({
+        defaultPath: getSaveAsDefaultPath(
+          state.currentFilePath,
+          state.currentFileName,
+          t("file.untitled"),
+        ),
+        filters: markdownFilters,
+      }),
+    readContent: getContent,
+    write: (path, content) =>
+      invoke<WriteConfirmation>("write_file", { path, content }),
+  });
 
-  try {
-    await invoke("write_file", { path, content });
-    setState({
-      currentFilePath: path,
-      currentFileName: fileNameFromPath(path),
-      lastSavedContent: content,
-    });
-    addRecentFile(path);
-    updateDirtyState(getContent());
-    await updateWindowTitle();
-    return true;
-  } catch (error) {
-    showError(t("file.saveAction"), error);
+  if (outcome.status === "cancelled") return false;
+  if (outcome.status === "failed") {
+    showError(t("file.saveAction"), outcome.error);
     return false;
   }
+
+  setState({
+    currentFilePath: outcome.path,
+    currentFileName: fileNameFromPath(outcome.path),
+    lastSavedContent: outcome.content,
+  });
+  updateDirtyState(getContent());
+
+  try {
+    addRecentFile(outcome.path);
+  } catch (error) {
+    console.error("Failed to update recent files after saving", error);
+  }
+
+  try {
+    await updateWindowTitle();
+  } catch (error) {
+    console.error("Failed to update window title after saving", error);
+  }
+
+  return true;
 }
 
 export async function saveFile(): Promise<boolean> {
-  const path = getState().currentFilePath;
-  return path ? writeCurrentFile(path) : saveAsFile();
+  return enqueueSave(() => runSave(false));
 }
 
 export async function saveAsFile(): Promise<boolean> {
-  const state = getState();
-  const path = await save({
-    defaultPath: state.currentFilePath
-      ? state.currentFileName
-      : t("file.untitled"),
-    filters: markdownFilters,
-  });
-
-  return path ? writeCurrentFile(path) : false;
+  return enqueueSave(() => runSave(true));
 }

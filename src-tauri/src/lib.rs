@@ -1,11 +1,50 @@
+#[derive(serde::Serialize)]
+struct WriteFileResult {
+    path: String,
+    content: String,
+}
+
 #[tauri::command]
 fn read_file(path: String) -> Result<String, String> {
     std::fs::read_to_string(path).map_err(|error| error.to_string())
 }
 
 #[tauri::command]
-fn write_file(path: String, content: String) -> Result<(), String> {
-    std::fs::write(path, content).map_err(|error| error.to_string())
+fn write_file(path: String, content: String) -> Result<WriteFileResult, String> {
+    use std::io::Write;
+
+    let mut file = std::fs::OpenOptions::new()
+        .create(true)
+        .write(true)
+        .truncate(true)
+        .open(&path)
+        .map_err(|error| error.to_string())?;
+    file.write_all(content.as_bytes())
+        .map_err(|error| error.to_string())?;
+    file.sync_all().map_err(|error| error.to_string())?;
+    drop(file);
+
+    let saved_content = std::fs::read_to_string(&path).map_err(|error| error.to_string())?;
+    if saved_content != content {
+        return Err("保存后读回的文件内容不一致".to_string());
+    }
+
+    let canonical_path = std::fs::canonicalize(&path).map_err(|error| error.to_string())?;
+    let confirmed_path = canonical_path.to_string_lossy();
+    let confirmed_path = confirmed_path
+        .strip_prefix(r"\\?\UNC\")
+        .map(|path| format!(r"\\{path}"))
+        .or_else(|| {
+            confirmed_path
+                .strip_prefix(r"\\?\")
+                .map(ToOwned::to_owned)
+        })
+        .unwrap_or_else(|| confirmed_path.into_owned());
+
+    Ok(WriteFileResult {
+        path: confirmed_path,
+        content: saved_content,
+    })
 }
 
 #[cfg(target_os = "windows")]
@@ -145,4 +184,35 @@ pub fn run() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::write_file;
+
+    #[test]
+    fn write_file_overwrites_existing_content() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("target")
+            .join("save-write-test.md");
+        std::fs::create_dir_all(path.parent().expect("test path has a parent"))
+            .expect("create test output directory");
+        std::fs::write(&path, "old content").expect("seed test file");
+
+        let result = write_file(
+            path.to_string_lossy().into_owned(),
+            "new modified content".to_string(),
+        )
+        .expect("write modified content");
+
+        assert_eq!(
+            std::path::Path::new(&result.path),
+            path,
+        );
+        assert_eq!(result.content, "new modified content");
+        assert_eq!(
+            std::fs::read_to_string(path).expect("read saved content"),
+            "new modified content",
+        );
+    }
 }

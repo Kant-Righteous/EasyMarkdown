@@ -57,8 +57,38 @@ const actions: Record<string, () => void | Promise<unknown>> = {
 };
 
 let toolbarBound = false;
+const submenuCloseTimers = new WeakMap<HTMLElement, number>();
+const SUBMENU_CLOSE_DELAY = 240;
+
+function cancelSubmenuClose(submenu: HTMLElement): void {
+  const timer = submenuCloseTimers.get(submenu);
+  if (timer !== undefined) {
+    window.clearTimeout(timer);
+    submenuCloseTimers.delete(submenu);
+  }
+}
+
+function cancelSubmenuCloseForTarget(target: Element): void {
+  let submenu = target.closest<HTMLElement>(".submenu");
+  while (submenu) {
+    cancelSubmenuClose(submenu);
+    submenu = submenu.parentElement?.closest<HTMLElement>(".submenu") ?? null;
+  }
+}
+
+function scheduleSubmenuClose(submenu: HTMLElement): void {
+  cancelSubmenuClose(submenu);
+  const timer = window.setTimeout(() => {
+    submenuCloseTimers.delete(submenu);
+    closeSubmenuTree(submenu);
+  }, SUBMENU_CLOSE_DELAY);
+  submenuCloseTimers.set(submenu, timer);
+}
 
 function closeSubmenus(): void {
+  document
+    .querySelectorAll<HTMLElement>(".submenu")
+    .forEach(cancelSubmenuClose);
   document.querySelectorAll<HTMLElement>(".submenu-panel").forEach((panel) => {
     panel.hidden = true;
     panel.classList.remove("opens-left");
@@ -118,6 +148,7 @@ function setSubmenuOpen(
 }
 
 function closeSubmenuTree(submenu: HTMLElement): void {
+  cancelSubmenuClose(submenu);
   submenu
     .querySelectorAll<HTMLElement>(".submenu-panel")
     .forEach((panel) => {
@@ -206,7 +237,9 @@ export function bindToolbar(): void {
   const toolbar = document.querySelector<HTMLElement>("#toolbar");
 
   const openHoveredSubmenu = (event: Event): void => {
-    const trigger = (event.target as Element).closest<HTMLButtonElement>(
+    const target = event.target as Element;
+    cancelSubmenuCloseForTarget(target);
+    const trigger = target.closest<HTMLButtonElement>(
       ".submenu-trigger",
     );
     if (trigger) setSubmenuOpen(trigger, true);
@@ -219,7 +252,7 @@ export function bindToolbar(): void {
     const submenu = (event.target as Element).closest<HTMLElement>(".submenu");
     const nextTarget = event.relatedTarget as Node | null;
     if (!submenu || (nextTarget && submenu.contains(nextTarget))) return;
-    closeSubmenuTree(submenu);
+    scheduleSubmenuClose(submenu);
   });
 
   toolbar?.addEventListener("focusout", (event) => {
