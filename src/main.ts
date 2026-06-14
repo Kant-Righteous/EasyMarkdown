@@ -4,6 +4,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { message } from "@tauri-apps/plugin-dialog";
 import { getContent, onEditorInput, setContent } from "./editor";
 import { renderMarkdown } from "./markdown";
+import { renderMermaidDiagrams } from "./mermaid";
 import { bindShortcuts } from "./shortcuts";
 import { getState, setState, subscribe, updateDirtyState } from "./state";
 import { bindToolbar } from "./toolbar";
@@ -32,6 +33,7 @@ function updatePreview(): void {
     preview.innerHTML = renderMarkdown(getContent());
     syncPreviewScroll();
     refreshSidebarOutline();
+    void renderMermaidDiagrams(preview).then(syncPreviewScroll);
   }
 }
 

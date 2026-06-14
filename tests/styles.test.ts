@@ -141,3 +141,55 @@ test("custom context menu and rename dialog have application styles", () => {
   assert.match(styles, /\.context-menu\[hidden\]\s*\{/);
   assert.match(styles, /\.rename-dialog\s*\{/);
 });
+
+test("format toolbar remains single-line and uses consistent icon buttons", () => {
+  assert.match(
+    styles,
+    /\.format-bar\s*\{[^}]*width:\s*100%;[^}]*max-width:\s*100vw;[^}]*flex-wrap:\s*nowrap;[^}]*overflow:\s*visible;/s,
+  );
+  assert.match(
+    styles,
+    /\.format-command\s*\{[^}]*width:\s*30px;[^}]*height:\s*30px;/s,
+  );
+  assert.match(styles, /\.format-icon\s*\{/);
+  assert.match(styles, /\.format-bar\.is-compact \.format-label\s*\{/);
+  assert.match(styles, /\.format-overflow-panel\s*\{/);
+});
+
+test("format overflow menus use one aligned item layout", () => {
+  assert.match(
+    styles,
+    /\.format-overflow-panel\s*\{[^}]*width:\s*190px;[^}]*min-width:\s*190px;/s,
+  );
+  assert.match(
+    styles,
+    /\.format-overflow-panel \.format-command\s*\{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*22px minmax\(0,\s*1fr\);[^}]*height:\s*34px;/s,
+  );
+  assert.match(
+    styles,
+    /\.format-overflow-panel :is\(\.format-icon,\s*\.format-symbol\)\s*\{[^}]*justify-self:\s*center;/s,
+  );
+  assert.match(
+    styles,
+    /\.format-menu-label\s*\{[^}]*text-align:\s*left;/s,
+  );
+});
+
+test("preview styles cover all toolbar Markdown extensions", () => {
+  assert.match(styles, /@import\s+"katex\/dist\/katex\.min\.css";/);
+  assert.match(styles, /#preview \.katex-display\s*\{/);
+  assert.match(styles, /#preview \.task-list-container\s*\{/);
+  assert.match(styles, /#preview \.footnotes\s*\{/);
+  assert.match(styles, /#preview mark\s*\{/);
+  assert.match(styles, /#preview \.mermaid-diagram\s*\{/);
+  assert.match(styles, /#preview \.mermaid-error\s*\{/);
+});
+
+test("print styles cover all toolbar Markdown extensions", () => {
+  assert.match(printStyles, /\.markdown-print-body \.katex-display\s*\{/);
+  assert.match(printStyles, /\.markdown-print-body \.task-list-container\s*\{/);
+  assert.match(printStyles, /\.markdown-print-body \.footnotes\s*\{/);
+  assert.match(printStyles, /\.markdown-print-body mark\s*\{/);
+  assert.match(printStyles, /\.markdown-print-body \.mermaid-diagram\s*\{/);
+  assert.match(printStyles, /\.markdown-print-body \.mermaid-error\s*\{/);
+});

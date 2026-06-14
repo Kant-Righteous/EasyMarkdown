@@ -93,3 +93,38 @@ test("重命名和自定义右键菜单文案同步三种语言", () => {
 
   setLanguage("zh-CN", storage());
 });
+
+test("新增格式命令提供中文、英文和法文文案", () => {
+  setLanguage("zh-CN", storage());
+  assert.equal(t("format.highlight"), "高亮");
+  assert.equal(t("format.inlineFormula"), "内联公式");
+
+  setLanguage("en", storage());
+  assert.equal(t("format.highlight"), "Highlight");
+  assert.equal(t("format.inlineFormula"), "Inline formula");
+
+  setLanguage("fr", storage());
+  assert.equal(t("format.highlight"), "Surligner");
+  assert.equal(t("format.inlineFormula"), "Formule en ligne");
+
+  setLanguage("zh-CN", storage());
+});
+
+test("Mermaid errors have localized fallback text", () => {
+  setLanguage("zh-CN", storage());
+  assert.equal(t("preview.mermaidError"), "图表语法有误，已保留源码。");
+
+  setLanguage("en", storage());
+  assert.equal(
+    t("preview.mermaidError"),
+    "The diagram syntax is invalid. The source has been preserved.",
+  );
+
+  setLanguage("fr", storage());
+  assert.equal(
+    t("preview.mermaidError"),
+    "La syntaxe du diagramme est invalide. Le code source a été conservé.",
+  );
+
+  setLanguage("zh-CN", storage());
+});

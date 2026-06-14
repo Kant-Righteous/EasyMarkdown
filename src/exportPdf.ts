@@ -3,7 +3,7 @@ import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { save } from "@tauri-apps/plugin-dialog";
 import { getContent } from "./editor";
-import { renderMarkdown } from "./markdown";
+import { renderMarkdownWithMermaid } from "./markdown";
 import { buildPrintHtml } from "./printTemplate";
 import { getState } from "./state";
 import { t } from "./i18n";
@@ -81,8 +81,14 @@ function takePrintJob(search: string): PrintJob | null {
 
 function applyPrintDocument(html: string): void {
   const parsed = new DOMParser().parseFromString(html, "text/html");
+  const existingStyles = Array.from(
+    document.head.querySelectorAll<HTMLLinkElement | HTMLStyleElement>(
+      'link[rel="stylesheet"], style',
+    ),
+  );
   document.documentElement.lang = parsed.documentElement.lang;
   document.head.replaceChildren(
+    ...existingStyles,
     ...Array.from(parsed.head.childNodes, (node) =>
       document.importNode(node, true),
     ),
@@ -169,11 +175,12 @@ export async function runPdfExportWindow(): Promise<boolean> {
 
 export async function exportPdf(): Promise<void> {
   const state = getState();
+  const bodyHtml = await renderMarkdownWithMermaid(getContent());
   createPrintWindow({
     defaultPath: defaultPdfName(),
     html: buildPrintHtml({
       title: state.currentFilePath ? state.currentFileName : "EasyMarkdown",
-      bodyHtml: renderMarkdown(getContent()),
+      bodyHtml,
     }),
   });
 }

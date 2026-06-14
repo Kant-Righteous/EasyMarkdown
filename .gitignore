@@ -47,3 +47,8 @@ coverage/
 # Private software copyright registration materials
 softcopyright-output/
 scripts/generate-softcopyright-source.mjs
+
+# Local browser-check outputs and screenshots
+.superpowers/chrome-check*/
+.superpowers/screenshots/
+.superpowers/brainstorm/*/

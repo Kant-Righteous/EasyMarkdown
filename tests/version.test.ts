@@ -44,3 +44,16 @@ test("application and installer versions are consistent", async () => {
     ),
   );
 });
+
+test("main window keeps a practical minimum editing size", async () => {
+  const tauriConfig = JSON.parse(
+    await readFile(
+      new URL("../src-tauri/tauri.conf.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  const mainWindow = tauriConfig.app.windows[0];
+
+  assert.equal(mainWindow.minWidth, 960);
+  assert.equal(mainWindow.minHeight, 640);
+});

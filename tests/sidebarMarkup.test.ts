@@ -50,3 +50,63 @@ test("file menu and page expose rename and custom context menu controls", () => 
   assert.match(html, /id="rename-dialog"/);
   assert.match(html, /id="rename-input"/);
 });
+
+test("format toolbar exposes five groups and all confirmed commands", () => {
+  const commands = [
+    "h1",
+    "h2",
+    "h3",
+    "bold",
+    "italic",
+    "underline",
+    "strikethrough",
+    "highlight",
+    "unordered-list",
+    "ordered-list",
+    "task-list",
+    "blockquote",
+    "code-block",
+    "formula-block",
+    "chart",
+    "link",
+    "image",
+    "table",
+    "horizontal-rule",
+    "inline-code",
+    "inline-formula",
+    "footnote",
+  ];
+
+  [
+    "headingGroup",
+    "emphasisGroup",
+    "listGroup",
+    "blockGroup",
+    "insertGroup",
+  ].forEach((group) => {
+    assert.match(html, new RegExp(`data-format-group="${group}"`));
+  });
+  commands.forEach((command) => {
+    assert.match(html, new RegExp(`data-command="${command}"`));
+  });
+  assert.equal(
+    [...html.matchAll(/class="format-overflow-panel/g)].length,
+    5,
+  );
+  assert.match(html, /class="format-icon"/);
+});
+
+test("quote and footnote commands use consistent line icons", () => {
+  assert.match(
+    html,
+    /data-command="blockquote"[\s\S]*?<svg class="format-icon format-icon-quote"/,
+  );
+  assert.match(
+    html,
+    /data-command="footnote"[\s\S]*?<svg class="format-icon format-icon-footnote"/,
+  );
+  assert.doesNotMatch(
+    html,
+    /data-command="footnote"[^>]*>[\s\S]*?class="format-symbol format-footnote"/,
+  );
+});

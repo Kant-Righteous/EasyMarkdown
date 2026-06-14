@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <style>
+    text { font-family: "Microsoft YaHei", "Segoe UI", sans-serif; fill: #20242a; }
+    .title { font-size: 28px; font-weight: 700; }
+    .subtitle { font-size: 15px; fill: #68717c; }
+    .card { fill: #f6f7f9; stroke: #cbd1d8; stroke-width: 1.5; }
+    .app { fill: white; stroke: #bbc3cc; }
+    .bar { fill: #f3f5f7; }
+    .button { fill: #fff; stroke: #ccd2d9; }
+    .active { fill: #e5ebf2; stroke: #aeb9c5; }
+    .menu { fill: white; stroke: #b9c1ca; }
+    .hover { fill: #eaf0f6; }
+    .line { stroke: #dce1e6; }
+    .label { font-size: 16px; font-weight: 700; }
+    .body { font-size: 13px; fill: #59636e; }
+    .ui { font-size: 13px; }
+    .hint { font-size: 11px; fill: #727b85; }
+    .recommended { fill: #285f91; }
+    .recommended-text { fill: white; font-size: 11px; font-weight: 700; }
+  </style>
+
+  <rect width="1200" height="760" fill="#ffffff"/>
+  <text x="48" y="52" class="title">第二行菜单布局方案</text>
+  <text x="48" y="80" class="subtitle">比较常用功能的可见性、菜单容量和学习成本</text>
+
+  <!-- A -->
+  <rect x="36" y="112" width="360" height="600" rx="12" class="card"/>
+  <rect x="58" y="138" width="316" height="380" rx="8" class="app"/>
+  <rect x="59" y="139" width="314" height="48" rx="7" class="bar"/>
+  <rect x="70" y="149" width="65" height="28" rx="5" class="active"/>
+  <text x="84" y="168" class="ui">段落 ▾</text>
+  <rect x="140" y="149" width="65" height="28" rx="5" class="button"/>
+  <text x="154" y="168" class="ui">格式 ▾</text>
+  <rect x="210" y="149" width="65" height="28" rx="5" class="button"/>
+  <text x="224" y="168" class="ui">插入 ▾</text>
+  <line x1="284" y1="151" x2="284" y2="175" class="line"/>
+  <rect x="292" y="149" width="30" height="28" rx="5" class="button"/>
+  <text x="302" y="168" class="ui" font-weight="700">B</text>
+  <rect x="327" y="149" width="34" height="28" rx="5" class="button"/>
+  <text x="340" y="168" class="ui" font-style="italic">I</text>
+
+  <rect x="70" y="194" width="274" height="292" rx="7" class="menu"/>
+  <rect x="77" y="202" width="260" height="34" rx="5" class="hover"/>
+  <text x="89" y="224" class="ui">✓  段落</text>
+  <text x="286" y="224" class="hint">Ctrl+0</text>
+  <text x="89" y="260" class="ui">标题</text>
+  <text x="315" y="260" class="ui">›</text>
+  <line x1="78" y1="275" x2="336" y2="275" class="line"/>
+  <text x="89" y="303" class="ui">提升标题级别</text>
+  <text x="286" y="303" class="hint">Ctrl+=</text>
+  <text x="89" y="339" class="ui">降低标题级别</text>
+  <text x="286" y="339" class="hint">Ctrl+-</text>
+  <line x1="78" y1="354" x2="336" y2="354" class="line"/>
+  <text x="89" y="382" class="ui">有序列表 / 无序列表 / 任务列表</text>
+  <text x="89" y="418" class="ui">上方插入段落 / 下方插入段落</text>
+  <text x="89" y="454" class="ui">脚注 / 分割线 / Front Matter</text>
+
+  <rect x="58" y="535" width="72" height="24" rx="12" class="recommended"/>
+  <text x="72" y="552" class="recommended-text">推荐方案</text>
+  <text x="58" y="588" class="label">A. 分类菜单 + 高频按钮</text>
+  <text x="58" y="620" class="body">完整能力按类别收纳，同时保留加粗、</text>
+  <text x="58" y="642" class="body">斜体、链接、列表等高频操作。</text>
+  <text x="58" y="674" class="body">易发现、点击快，也方便后续扩展。</text>
+
+  <!-- B -->
+  <rect x="420" y="112" width="360" height="600" rx="12" class="card"/>
+  <rect x="442" y="138" width="316" height="380" rx="8" class="app"/>
+  <rect x="443" y="139" width="314" height="48" rx="7" class="bar"/>
+  <rect x="454" y="149" width="65" height="28" rx="5" class="active"/>
+  <text x="469" y="168" class="ui">段落</text>
+  <rect x="524" y="149" width="65" height="28" rx="5" class="button"/>
+  <text x="539" y="168" class="ui">格式</text>
+  <rect x="594" y="149" width="65" height="28" rx="5" class="button"/>
+  <text x="609" y="168" class="ui">查看</text>
+
+  <rect x="454" y="194" width="274" height="292" rx="7" class="menu"/>
+  <text x="473" y="224" class="ui">标题</text>
+  <text x="700" y="224" class="ui">›</text>
+  <rect x="461" y="239" width="260" height="34" rx="5" class="hover"/>
+  <text x="473" y="261" class="ui">✓  段落</text>
+  <text x="670" y="261" class="hint">Ctrl+0</text>
+  <line x1="462" y1="281" x2="720" y2="281" class="line"/>
+  <text x="473" y="309" class="ui">表格</text>
+  <text x="636" y="309" class="hint">Ctrl+Shift+T</text>
+  <text x="473" y="345" class="ui">代码块</text>
+  <text x="636" y="345" class="hint">Ctrl+Shift+K</text>
+  <text x="473" y="381" class="ui">公式块</text>
+  <text x="636" y="381" class="hint">Ctrl+Shift+M</text>
+  <line x1="462" y1="397" x2="720" y2="397" class="line"/>
+  <text x="473" y="425" class="ui">有序列表 / 无序列表 / 任务列表</text>
+  <text x="473" y="461" class="ui">脚注 / 分割线 / Front Matter</text>
+
+  <text x="442" y="588" class="label">B. 纯文字菜单栏</text>
+  <text x="442" y="620" class="body">最接近参考图，第二行非常整洁。</text>
+  <text x="442" y="642" class="body">但常用格式也需要展开菜单，操作步骤</text>
+  <text x="442" y="664" class="body">增加，新用户不容易快速发现功能。</text>
+
+  <!-- C -->
+  <rect x="804" y="112" width="360" height="600" rx="12" class="card"/>
+  <rect x="826" y="138" width="316" height="380" rx="8" class="app"/>
+  <rect x="827" y="139" width="314" height="48" rx="7" class="bar"/>
+  <rect x="838" y="149" width="36" height="28" rx="5" class="button"/>
+  <text x="848" y="168" class="ui">H1</text>
+  <rect x="879" y="149" width="34" height="28" rx="5" class="button"/>
+  <text x="891" y="168" class="ui" font-weight="700">B</text>
+  <rect x="918" y="149" width="34" height="28" rx="5" class="button"/>
+  <text x="931" y="168" class="ui" font-style="italic">I</text>
+  <rect x="957" y="149" width="65" height="28" rx="5" class="button"/>
+  <text x="969" y="168" class="ui">• 列表</text>
+  <rect x="1027" y="149" width="101" height="28" rx="5" class="active"/>
+  <text x="1045" y="168" class="ui">更多 ▾</text>
+
+  <rect x="856" y="194" width="274" height="292" rx="7" class="menu"/>
+  <text x="875" y="224" class="ui">提升标题级别</text>
+  <text x="875" y="260" class="ui">降低标题级别</text>
+  <line x1="864" y1="276" x2="1122" y2="276" class="line"/>
+  <text x="875" y="304" class="ui">表格</text>
+  <text x="875" y="340" class="ui">代码块</text>
+  <text x="875" y="376" class="ui">公式块</text>
+  <text x="875" y="412" class="ui">脚注</text>
+  <text x="875" y="448" class="ui">YAML Front Matter</text>
+
+  <text x="826" y="588" class="label">C. 高频按钮 + “更多”</text>
+  <text x="826" y="620" class="body">改动最小，横向占用也较少。</text>
+  <text x="826" y="642" class="body">但菜单没有清晰分类，功能增多后查找</text>
+  <text x="826" y="664" class="body">速度下降，不适合长期扩展。</text>
+</svg>

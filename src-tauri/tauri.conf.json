@@ -16,8 +16,8 @@
         "title": "EasyMarkdown",
         "width": 1200,
         "height": 760,
-        "minWidth": 760,
-        "minHeight": 500
+        "minWidth": 960,
+        "minHeight": 640
       }
     ],
     "security": {

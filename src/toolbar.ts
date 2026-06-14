@@ -1,13 +1,23 @@
 import {
   blockquote,
   bold,
+  chart,
   codeBlock,
+  footnote,
+  formulaBlock,
   heading,
+  highlight,
   horizontalRule,
+  image,
+  inlineCode,
+  inlineFormula,
   italic,
   link,
   orderedList,
+  strikethrough,
   table,
+  taskList,
+  underline,
   unorderedList,
 } from "./commands";
 import { exportPdf } from "./exportPdf";
@@ -35,6 +45,7 @@ import {
   t,
 } from "./i18n";
 import { getState, subscribe } from "./state";
+import { TOOLBAR_OVERFLOW_ORDER } from "./toolbarOverflow";
 
 const actions: Record<string, () => void | Promise<unknown>> = {
   new: newFile,
@@ -50,18 +61,139 @@ const actions: Record<string, () => void | Promise<unknown>> = {
   h3: () => heading(3),
   bold,
   italic,
+  underline,
+  strikethrough,
+  highlight,
   "unordered-list": unorderedList,
   "ordered-list": orderedList,
+  "task-list": taskList,
   blockquote,
   "code-block": codeBlock,
+  "formula-block": formulaBlock,
+  chart,
   link,
+  image,
   table,
   "horizontal-rule": horizontalRule,
+  "inline-code": inlineCode,
+  "inline-formula": inlineFormula,
+  footnote,
 };
 
 let toolbarBound = false;
 const submenuCloseTimers = new WeakMap<HTMLElement, number>();
 const SUBMENU_CLOSE_DELAY = 240;
+
+interface FormatGroupElements {
+  primary: HTMLElement;
+  panel: HTMLElement;
+  trigger: HTMLButtonElement;
+  buttons: HTMLButtonElement[];
+}
+
+function bindFormatOverflow(): () => void {
+  const bar = document.querySelector<HTMLElement>(".format-bar");
+  if (!bar) return () => {};
+
+  const groups = Array.from(
+    bar.querySelectorAll<HTMLElement>("[data-format-group]"),
+  )
+    .map<FormatGroupElements | null>((group) => {
+      const primary = group.querySelector<HTMLElement>(".format-primary");
+      const panel = group.querySelector<HTMLElement>(
+        ".format-overflow-panel",
+      );
+      const trigger = group.querySelector<HTMLButtonElement>(
+        ".format-overflow-trigger",
+      );
+      if (!primary || !panel || !trigger) return null;
+      return {
+        primary,
+        panel,
+        trigger,
+        buttons: Array.from(
+          primary.querySelectorAll<HTMLButtonElement>(
+            ".format-command[data-command]",
+          ),
+        ),
+      };
+    })
+    .filter((group): group is FormatGroupElements => group !== null);
+
+  const groupByCommand = new Map<string, FormatGroupElements>();
+  groups.forEach((group) => {
+    group.buttons.forEach((button) => {
+      const command = button.dataset.command;
+      if (command) groupByCommand.set(command, group);
+    });
+  });
+
+  const restoreButtons = (): void => {
+    groups.forEach((group) => {
+      group.buttons.forEach((button) => {
+        button.querySelector(".format-menu-label")?.remove();
+        button.removeAttribute("role");
+        group.primary.append(button);
+      });
+      group.trigger.hidden = true;
+      group.trigger.setAttribute("aria-expanded", "false");
+      group.panel.hidden = true;
+      group.panel.classList.remove("opens-left");
+    });
+    bar.classList.remove("is-compact");
+  };
+
+  const moveToOverflow = (command: string): void => {
+    const group = groupByCommand.get(command);
+    const button = group?.buttons.find(
+      (item) => item.dataset.command === command,
+    );
+    if (!group || !button) return;
+
+    const label = document.createElement("span");
+    label.className = "format-menu-label";
+    const translationKey = button.dataset.i18nTitle;
+    label.textContent = translationKey ? t(translationKey) : button.title;
+    button.append(label);
+    button.setAttribute("role", "menuitem");
+    group.panel.append(button);
+    group.trigger.hidden = false;
+  };
+
+  const overflows = (): boolean => {
+    const barBounds = bar.getBoundingClientRect();
+    return Array.from(bar.children).some(
+      (child) =>
+        (child as HTMLElement).getBoundingClientRect().right >
+        barBounds.right + 1,
+    );
+  };
+
+  const update = (): void => {
+    restoreButtons();
+    if (!overflows()) return;
+
+    bar.classList.add("is-compact");
+    for (const command of TOOLBAR_OVERFLOW_ORDER) {
+      if (!overflows()) break;
+      moveToOverflow(command);
+    }
+  };
+
+  let frame = 0;
+  const scheduleUpdate = (): void => {
+    window.cancelAnimationFrame(frame);
+    frame = window.requestAnimationFrame(update);
+  };
+
+  if (typeof ResizeObserver === "function") {
+    new ResizeObserver(scheduleUpdate).observe(bar);
+  } else {
+    window.addEventListener("resize", scheduleUpdate);
+  }
+  scheduleUpdate();
+  return scheduleUpdate;
+}
 
 function cancelSubmenuClose(submenu: HTMLElement): void {
   const timer = submenuCloseTimers.get(submenu);
@@ -234,7 +366,6 @@ export function bindToolbar(): void {
   toolbarBound = true;
   renderRecentFiles();
   subscribeRecentFiles(renderRecentFiles);
-  subscribeLanguage(() => renderRecentFiles());
   bindRecentFilesStorageSync();
 
   const updateFileActions = () => {
@@ -247,6 +378,11 @@ export function bindToolbar(): void {
   subscribe(updateFileActions);
 
   const toolbar = document.querySelector<HTMLElement>("#toolbar");
+  const updateFormatOverflow = bindFormatOverflow();
+  subscribeLanguage(() => {
+    renderRecentFiles();
+    updateFormatOverflow();
+  });
 
   const openHoveredSubmenu = (event: Event): void => {
     const target = event.target as Element;
@@ -333,7 +469,11 @@ export function bindToolbar(): void {
   });
 
   document.addEventListener("click", (event) => {
-    if (!(event.target as Element).closest(".dropdown")) {
+    if (
+      !(event.target as Element).closest(
+        ".dropdown, .format-overflow",
+      )
+    ) {
       closeMenus();
     }
   });
