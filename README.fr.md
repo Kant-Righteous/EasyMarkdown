@@ -6,7 +6,7 @@
   <strong>Français</strong>
 </p>
 
-![Aperçu d'EasyMarkdown](demo.png)
+![Aperçu d'EasyMarkdown](demo.fr.png)
 
 ## Présentation
 
@@ -18,7 +18,7 @@ EasyMarkdown est un éditeur Markdown local et léger pour ordinateur, avec édi
 - Modes édition, aperçu et écran partagé
 - Barre de mise en forme Markdown et raccourcis clavier courants
 - Liste des fichiers récents
-- Rendu MDX léger et limité
+- Rendu MDX léger
 - Export PDF
 - Interfaces en chinois, anglais et français
 - Ouverture des liens de l'aperçu dans le navigateur système par défaut

@@ -6,7 +6,7 @@
   <a href="README.fr.md">Français</a>
 </p>
 
-![EasyMarkdown preview](demo.png)
+![EasyMarkdown preview](demo.en.png)
 
 ## Overview
 
@@ -18,7 +18,7 @@ EasyMarkdown is a lightweight local Markdown desktop editor with editing, live p
 - Edit, preview, and split views
 - Markdown formatting toolbar and common keyboard shortcuts
 - Recent files list
-- Lightweight, restricted MDX rendering
+- Lightweight MDX rendering
 - PDF export
 - Chinese, English, and French interfaces
 - Open preview links in the default system browser
