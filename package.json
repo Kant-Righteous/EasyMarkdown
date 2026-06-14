@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "test": "node --test --experimental-strip-types",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "copyright:source": "node scripts/generate-softcopyright-source.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
