@@ -1,4 +1,4 @@
-# EasyMarkdown 1.1.0
+# EasyMarkdown
 
 <p align="center">
   <a href="README.md">中文</a> ·

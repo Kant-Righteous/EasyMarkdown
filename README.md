@@ -1,4 +1,4 @@
-# EasyMarkdown 1.1.0
+# EasyMarkdown
 
 <p align="center">
   <strong>中文</strong> ·
