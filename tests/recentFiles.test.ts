@@ -5,6 +5,7 @@ import {
   clearRecentFiles,
   loadRecentFiles,
   removeRecentFile,
+  replaceRecentFile,
   type StorageLike,
 } from "../src/recentFiles.ts";
 
@@ -50,4 +51,10 @@ test("支持移除和清空", () => {
   assert.deepEqual(loadRecentFiles(store), ["C:\\b.md"]);
   clearRecentFiles(store);
   assert.deepEqual(loadRecentFiles(store), []);
+});
+
+test("重命名后原位置替换最近文件路径", () => {
+  const store = storage(JSON.stringify(["C:\\a.md", "C:\\b.md"]));
+  replaceRecentFile("C:\\a.md", "C:\\renamed.md", store);
+  assert.deepEqual(loadRecentFiles(store), ["C:\\renamed.md", "C:\\b.md"]);
 });

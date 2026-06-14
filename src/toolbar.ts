@@ -20,6 +20,7 @@ import {
   saveFile,
 } from "./file";
 import { redo, undo } from "./editor";
+import { renameFile } from "./fileRenameController";
 import {
   bindRecentFilesStorageSync,
   clearRecentFiles,
@@ -33,12 +34,14 @@ import {
   subscribeLanguage,
   t,
 } from "./i18n";
+import { getState, subscribe } from "./state";
 
 const actions: Record<string, () => void | Promise<unknown>> = {
   new: newFile,
   open: openFile,
   save: saveFile,
   "save-as": saveAsFile,
+  rename: renameFile,
   "export-pdf": exportPdf,
   undo,
   redo,
@@ -233,6 +236,15 @@ export function bindToolbar(): void {
   subscribeRecentFiles(renderRecentFiles);
   subscribeLanguage(() => renderRecentFiles());
   bindRecentFilesStorageSync();
+
+  const updateFileActions = () => {
+    const renameButton = document.querySelector<HTMLButtonElement>(
+      '[data-command="rename"]',
+    );
+    if (renameButton) renameButton.disabled = !getState().currentFilePath;
+  };
+  updateFileActions();
+  subscribe(updateFileActions);
 
   const toolbar = document.querySelector<HTMLElement>("#toolbar");
 

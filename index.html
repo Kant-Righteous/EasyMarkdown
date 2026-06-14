@@ -55,9 +55,12 @@
                   <span data-i18n="menu.save">保存</span>
                   <span class="shortcut-hint">Ctrl+S</span>
                 </button>
-                <button type="button" data-command="save-as" role="menuitem">
-                  <span data-i18n="menu.saveAs">另存为</span>
-                </button>
+              <button type="button" data-command="save-as" role="menuitem">
+                <span data-i18n="menu.saveAs">另存为</span>
+              </button>
+              <button type="button" data-command="rename" role="menuitem" disabled>
+                <span data-i18n="menu.rename">重命名</span>
+              </button>
                 <div class="menu-separator" role="separator"></div>
                 <button type="button" data-command="export-pdf" role="menuitem">
                   <span data-i18n="menu.exportPdf">导出 PDF</span>
@@ -156,6 +159,21 @@
         </div>
 
         <div class="format-bar" role="toolbar" aria-label="Markdown 格式工具栏" data-i18n-aria-label="format.toolbar">
+          <button
+            type="button"
+            class="sidebar-toggle"
+            id="sidebar-toggle"
+            aria-controls="sidebar"
+            aria-expanded="true"
+            aria-label="切换侧栏"
+            data-i18n-aria-label="sidebar.toggle"
+            title="切换侧栏"
+            data-i18n-title="sidebar.toggle"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 4h18v16H3V4Zm2 2v12h4V6H5Zm6 0v12h8V6h-8Z"></path>
+            </svg>
+          </button>
           <div class="format-group" role="group" aria-label="标题" data-i18n-aria-label="format.headingGroup">
             <span class="format-label" data-i18n="format.heading">标题</span>
             <button type="button" data-command="h1" title="一级标题" data-i18n-title="format.h1">H1</button>
@@ -210,21 +228,86 @@
         </div>
       </header>
 
-      <section class="workspace view-split" id="workspace">
-        <div class="editor-pane">
-          <textarea
-            id="editor"
-            aria-label="Markdown 编辑区"
-            data-i18n-aria-label="editor.label"
-            spellcheck="false"
-            placeholder="在这里输入 Markdown..."
-            data-i18n-placeholder="editor.placeholder"
-          ></textarea>
-        </div>
-        <div class="preview-pane">
-          <article id="preview" aria-label="Markdown 预览区" data-i18n-aria-label="preview.label"></article>
-        </div>
-      </section>
+      <div class="workspace-shell" id="workspace-shell">
+        <aside class="sidebar" id="sidebar" aria-label="文档侧栏" data-i18n-aria-label="sidebar.label">
+          <div class="sidebar-tabs" role="tablist" aria-label="侧栏内容" data-i18n-aria-label="sidebar.tabs">
+            <button
+              type="button"
+              class="sidebar-tab"
+              id="sidebar-files-tab"
+              role="tab"
+              aria-selected="true"
+              aria-controls="sidebar-files-panel"
+              data-sidebar-tab="files"
+              data-i18n="sidebar.files"
+            >文件</button>
+            <button
+              type="button"
+              class="sidebar-tab"
+              id="sidebar-outline-tab"
+              role="tab"
+              aria-selected="false"
+              aria-controls="sidebar-outline-panel"
+              data-sidebar-tab="outline"
+              data-i18n="sidebar.outline"
+            >大纲</button>
+          </div>
+          <section
+            class="sidebar-panel"
+            id="sidebar-files-panel"
+            role="tabpanel"
+            aria-labelledby="sidebar-files-tab"
+          >
+            <div class="sidebar-list" id="sidebar-recent-files"></div>
+          </section>
+          <section
+            class="sidebar-panel"
+            id="sidebar-outline-panel"
+            role="tabpanel"
+            aria-labelledby="sidebar-outline-tab"
+            hidden
+          >
+            <nav class="sidebar-list outline-list" id="sidebar-outline" aria-label="文档大纲" data-i18n-aria-label="sidebar.outline"></nav>
+          </section>
+        </aside>
+
+        <div
+          class="sidebar-resizer"
+          id="sidebar-resizer"
+          role="separator"
+          aria-orientation="vertical"
+          aria-controls="sidebar"
+          aria-label="调整侧栏宽度"
+          data-i18n-aria-label="sidebar.resize"
+          tabindex="0"
+        ></div>
+
+        <section class="workspace view-split" id="workspace">
+          <div class="editor-pane">
+            <textarea
+              id="editor"
+              aria-label="Markdown 编辑区"
+              data-i18n-aria-label="editor.label"
+              spellcheck="false"
+              placeholder="在这里输入 Markdown..."
+              data-i18n-placeholder="editor.placeholder"
+            ></textarea>
+          </div>
+          <div
+            class="split-resizer"
+            id="split-resizer"
+            role="separator"
+            aria-orientation="vertical"
+            aria-controls="editor preview"
+            aria-label="调整编辑区和预览区宽度"
+            data-i18n-aria-label="split.resize"
+            tabindex="0"
+          ></div>
+          <div class="preview-pane">
+            <article id="preview" aria-label="Markdown 预览区" data-i18n-aria-label="preview.label"></article>
+          </div>
+        </section>
+      </div>
 
       <footer class="statusbar">
         <span id="status-path" data-i18n="status.unsavedFile">未保存文件</span>
@@ -273,5 +356,18 @@
         </span>
       </footer>
     </main>
+    <div class="context-menu" id="context-menu" role="menu" hidden></div>
+    <dialog class="rename-dialog" id="rename-dialog">
+      <form id="rename-form">
+        <h2 data-i18n="rename.title">重命名文件</h2>
+        <label for="rename-input" data-i18n="rename.name">文件名</label>
+        <input id="rename-input" type="text" autocomplete="off" />
+        <p class="rename-error" id="rename-error" aria-live="polite"></p>
+        <div class="rename-actions">
+          <button id="rename-cancel" type="button" data-i18n="rename.cancel">取消</button>
+          <button type="submit" data-i18n="rename.confirm">重命名</button>
+        </div>
+      </form>
+    </dialog>
   </body>
 </html>
