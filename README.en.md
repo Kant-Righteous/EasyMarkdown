@@ -1,4 +1,4 @@
-# EasyMarkdown 1.0.0
+# EasyMarkdown
 
 <p align="center">
   <a href="README.md">中文</a> ·
@@ -6,7 +6,7 @@
   <a href="README.fr.md">Français</a>
 </p>
 
-![EasyMarkdown preview](demo.png)
+![EasyMarkdown preview](demo.en.png)
 
 ## Overview
 
@@ -18,9 +18,14 @@ EasyMarkdown is a lightweight local Markdown desktop editor with editing, live p
 - Edit, preview, and split views
 - Markdown formatting toolbar and common keyboard shortcuts
 - Recent files list
-- System printing and PDF export
+- Lightweight MDX rendering
+- PDF export
 - Chinese, English, and French interfaces
 - Open preview links in the default system browser
+
+Lightweight MDX supports the built-in `Icon`, `CardGroup` / `Card`, expanded
+`Tabs` / `Tab`, and a limited set of safe HTML. It is not a full MDX runtime
+and does not execute component imports, arbitrary JSX, or JavaScript expressions.
 
 ## Technology
 

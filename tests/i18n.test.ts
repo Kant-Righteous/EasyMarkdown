@@ -58,3 +58,38 @@ test("切换语言后持久化并返回对应翻译", () => {
 
   setLanguage("zh-CN", store);
 });
+
+test("未保存确认使用通用的保存、不保存和取消文案", () => {
+  setLanguage("zh-CN", storage());
+  assert.equal(t("file.saveChanges"), "保存");
+  assert.equal(t("file.discardChanges"), "不保存");
+  assert.equal(t("file.cancelChanges"), "取消");
+
+  setLanguage("en", storage());
+  assert.equal(t("file.saveChanges"), "Save");
+  assert.equal(t("file.discardChanges"), "Don't Save");
+  assert.equal(t("file.cancelChanges"), "Cancel");
+
+  setLanguage("fr", storage());
+  assert.equal(t("file.saveChanges"), "Enregistrer");
+  assert.equal(t("file.discardChanges"), "Ne pas enregistrer");
+  assert.equal(t("file.cancelChanges"), "Annuler");
+
+  setLanguage("zh-CN", storage());
+});
+
+test("重命名和自定义右键菜单文案同步三种语言", () => {
+  setLanguage("zh-CN", storage());
+  assert.equal(t("menu.rename"), "重命名");
+  assert.equal(t("context.inspect"), "检查");
+
+  setLanguage("en", storage());
+  assert.equal(t("menu.rename"), "Rename");
+  assert.equal(t("context.inspect"), "Inspect");
+
+  setLanguage("fr", storage());
+  assert.equal(t("menu.rename"), "Renommer");
+  assert.equal(t("context.inspect"), "Inspecter");
+
+  setLanguage("zh-CN", storage());
+});

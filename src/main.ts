@@ -17,15 +17,21 @@ import { bindPreviewLinks } from "./previewLinks";
 import { bindSplitScrollSync } from "./scrollSync";
 import { runPdfExportWindow } from "./exportPdf";
 import { bindContentZoom } from "./previewZoom";
+import { bindSidebar } from "./sidebar";
+import { bindSplitPane } from "./splitPane";
+import { bindFileDrop } from "./fileDrop";
+import { bindContextMenu } from "./contextMenu";
 
 let previewTimer: number | undefined;
 let syncPreviewScroll = (): void => {};
+let refreshSidebarOutline = (): void => {};
 
 function updatePreview(): void {
   const preview = document.querySelector<HTMLElement>("#preview");
   if (preview) {
     preview.innerHTML = renderMarkdown(getContent());
     syncPreviewScroll();
+    refreshSidebarOutline();
   }
 }
 
@@ -72,10 +78,16 @@ window.addEventListener("DOMContentLoaded", async () => {
     setState({ currentFileName: t("file.untitled") });
   }
   bindToolbar();
+  bindContextMenu();
   bindShortcuts();
   bindAiMode();
   bindPreviewLinks();
   bindContentZoom();
+  refreshSidebarOutline = bindSidebar().refreshOutline;
+  bindSplitPane();
+  void bindFileDrop((path) =>
+    openPathInCurrentWindow(path, { removeOnFailure: true }),
+  );
   syncPreviewScroll = bindSplitScrollSync();
   subscribe(updateChrome);
   subscribeLanguage(() => {

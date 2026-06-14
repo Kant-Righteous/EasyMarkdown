@@ -16,6 +16,7 @@ import {
   performSave,
   type WriteConfirmation,
 } from "./saveFlow";
+import { confirmUnsavedTransition } from "./fileTransition";
 import { getState, setState, updateDirtyState } from "./state";
 import { t } from "./i18n";
 
@@ -40,13 +41,6 @@ async function updateWindowTitle(): Promise<void> {
   );
 }
 
-function confirmDiscardChanges(): boolean {
-  return (
-    !getState().isDirty ||
-    window.confirm(t("file.discardConfirm"))
-  );
-}
-
 function showError(action: string, error: unknown): void {
   const errorMessage = error instanceof Error ? error.message : String(error);
   window.alert(
@@ -54,27 +48,28 @@ function showError(action: string, error: unknown): void {
   );
 }
 
-async function prepareForOpen(): Promise<boolean> {
-  if (!getState().isDirty) return true;
-
-  const saveLabel = t("file.saveAndOpen");
-  const discardLabel = t("file.discardAndOpen");
-  const result = await message(t("file.unsavedMessage"), {
-    title: t("file.openTitle"),
-    kind: "warning",
-    buttons: {
-      yes: saveLabel,
-      no: discardLabel,
-      cancel: t("file.cancelOpen"),
+async function prepareForFileTransition(): Promise<boolean> {
+  return confirmUnsavedTransition({
+    isDirty: getState().isDirty,
+    prompt: async () => {
+      const saveLabel = t("file.saveChanges");
+      const discardLabel = t("file.discardChanges");
+      const result = await message(t("file.unsavedMessage"), {
+        title: t("file.unsavedTitle"),
+        kind: "warning",
+        buttons: {
+          yes: saveLabel,
+          no: discardLabel,
+          cancel: t("file.cancelChanges"),
+        },
+      });
+      return getOpenDecision(result, {
+        save: saveLabel,
+        discard: discardLabel,
+      });
     },
+    save: saveFile,
   });
-
-  const decision = getOpenDecision(result, {
-    save: saveLabel,
-    discard: discardLabel,
-  });
-  if (decision === "cancel") return false;
-  return decision === "discard" || (await saveFile());
 }
 
 async function loadFile(path: string): Promise<void> {
@@ -95,7 +90,7 @@ export async function openPathInCurrentWindow(
   options: { confirmUnsaved?: boolean; removeOnFailure?: boolean } = {},
 ): Promise<boolean> {
   const { confirmUnsaved = true, removeOnFailure = false } = options;
-  if (confirmUnsaved && !(await prepareForOpen())) return false;
+  if (confirmUnsaved && !(await prepareForFileTransition())) return false;
 
   try {
     await loadFile(path);
@@ -108,7 +103,7 @@ export async function openPathInCurrentWindow(
 }
 
 export async function newFile(): Promise<void> {
-  if (!confirmDiscardChanges()) return;
+  if (!(await prepareForFileTransition())) return;
 
   setContent("");
   setState({
@@ -166,6 +161,21 @@ export function openPathInNewWindow(path: string): void {
       t("recent.newWindowFailed", { message: String(event.payload) }),
     );
   });
+}
+
+export async function detachDeletedFile(path: string): Promise<void> {
+  const state = getState();
+  const samePath =
+    state.currentFilePath?.toLocaleLowerCase() === path.toLocaleLowerCase();
+  if (!samePath) return;
+
+  setState({
+    currentFilePath: null,
+    currentFileName: t("file.untitled"),
+    lastSavedContent: "",
+  });
+  updateDirtyState(getContent());
+  await updateWindowTitle();
 }
 
 async function runSave(forceSaveAs: boolean): Promise<boolean> {

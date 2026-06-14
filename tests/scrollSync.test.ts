@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { calculateSyncedScrollTop } from "../src/scrollSync.ts";
+import {
+  calculateAnchoredScrollTop,
+  calculateSyncedScrollTop,
+} from "../src/scrollSync.ts";
 
 test("按可滚动距离比例同步滚动位置", () => {
   assert.equal(
@@ -36,5 +39,38 @@ test("滚动位置限制在有效范围内", () => {
       { scrollHeight: 1000, clientHeight: 400 },
     ),
     600,
+  );
+});
+
+test("按照源码行锚点同步不同高度的内容块", () => {
+  const editorAnchors = [
+    { line: 0, top: 0 },
+    { line: 10, top: 200 },
+    { line: 20, top: 400 },
+  ];
+  const previewAnchors = [
+    { line: 0, top: 0 },
+    { line: 10, top: 600 },
+    { line: 20, top: 800 },
+  ];
+
+  assert.equal(
+    calculateAnchoredScrollTop(100, editorAnchors, previewAnchors),
+    300,
+  );
+  assert.equal(
+    calculateAnchoredScrollTop(300, editorAnchors, previewAnchors),
+    700,
+  );
+});
+
+test("锚点不足时返回空结果以便回退到比例同步", () => {
+  assert.equal(
+    calculateAnchoredScrollTop(
+      100,
+      [{ line: 0, top: 0 }],
+      [{ line: 0, top: 0 }],
+    ),
+    null,
   );
 });

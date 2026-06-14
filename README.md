@@ -1,4 +1,4 @@
-# EasyMarkdown 1.0.0
+# EasyMarkdown
 
 <p align="center">
   <strong>中文</strong> ·
@@ -18,9 +18,14 @@ EasyMarkdown 是一款轻量的本地 Markdown 桌面编辑器，支持编辑、
 - 编辑、预览和分屏视图
 - Markdown 格式工具栏与常用快捷键
 - 最近文件列表
-- 系统打印与 PDF 导出
+- 轻量的 MDX 渲染
+- PDF 导出
 - 中文、英语和法语界面
 - 在系统默认浏览器中打开预览链接
+
+轻量 MDX 支持内置的 `Icon`、`CardGroup` / `Card`、展开式
+`Tabs` / `Tab`，以及有限的安全 HTML。它不是完整的 MDX 运行时，
+不会执行组件导入、任意 JSX 或 JavaScript 表达式。
 
 ## 技术栈
 

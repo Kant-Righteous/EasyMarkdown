@@ -88,6 +88,26 @@ export function removeRecentFile(
   );
 }
 
+export function replaceRecentFile(
+  oldPath: string,
+  newPath: string,
+  storage = defaultStorage(),
+): void {
+  const normalizeForComparison = (path: string) =>
+    path.replace(/\\/g, "/").toLocaleLowerCase();
+  const oldKey = normalizeForComparison(oldPath);
+  const paths = loadRecentFiles(storage)
+    .map((item) => (normalizeForComparison(item) === oldKey ? newPath : item))
+    .filter(
+      (item, index, items) =>
+        items.findIndex(
+          (candidate) =>
+            normalizeForComparison(candidate) === normalizeForComparison(item),
+        ) === index,
+    );
+  persist(paths, storage);
+}
+
 export function clearRecentFiles(storage = defaultStorage()): void {
   if (!storage) return;
   try {

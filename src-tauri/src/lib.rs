@@ -9,6 +9,70 @@ fn read_file(path: String) -> Result<String, String> {
     std::fs::read_to_string(path).map_err(|error| error.to_string())
 }
 
+fn display_path(path: &std::path::Path) -> String {
+    let path = path.to_string_lossy();
+    path.strip_prefix(r"\\?\UNC\")
+        .map(|path| format!(r"\\{path}"))
+        .or_else(|| path.strip_prefix(r"\\?\").map(ToOwned::to_owned))
+        .unwrap_or_else(|| path.into_owned())
+}
+
+#[tauri::command]
+fn rename_file(path: String, new_name: String) -> Result<String, String> {
+    let new_name = new_name.trim();
+    if new_name.is_empty()
+        || new_name.ends_with(['.', ' '])
+        || new_name.chars().any(|character| {
+            matches!(
+                character,
+                '<' | '>' | ':' | '"' | '/' | '\\' | '|' | '?' | '*'
+            ) || character.is_control()
+        })
+    {
+        return Err("The file name is invalid.".to_string());
+    }
+
+    let source = std::path::Path::new(&path);
+    if !std::fs::metadata(source)
+        .map_err(|error| error.to_string())?
+        .is_file()
+    {
+        return Err("The selected path is not a regular file.".to_string());
+    }
+    if std::path::Path::new(new_name)
+        .file_name()
+        .and_then(|name| name.to_str())
+        != Some(new_name)
+    {
+        return Err("The file name must not contain a directory path.".to_string());
+    }
+
+    let parent = source
+        .parent()
+        .ok_or_else(|| "The selected file has no parent directory.".to_string())?;
+    let target = parent.join(new_name);
+    if target.exists() {
+        let source_canonical = std::fs::canonicalize(source).map_err(|error| error.to_string())?;
+        let target_canonical = std::fs::canonicalize(&target).map_err(|error| error.to_string())?;
+        if source_canonical != target_canonical {
+            return Err("A file with that name already exists.".to_string());
+        }
+    }
+
+    std::fs::rename(source, &target).map_err(|error| error.to_string())?;
+    let confirmed = std::fs::canonicalize(&target).map_err(|error| error.to_string())?;
+    Ok(display_path(&confirmed))
+}
+
+#[tauri::command]
+fn delete_file(path: String) -> Result<(), String> {
+    let metadata = std::fs::metadata(&path).map_err(|error| error.to_string())?;
+    if !metadata.is_file() {
+        return Err("The selected path is not a regular file.".to_string());
+    }
+    std::fs::remove_file(path).map_err(|error| error.to_string())
+}
+
 #[tauri::command]
 fn write_file(path: String, content: String) -> Result<WriteFileResult, String> {
     use std::io::Write;
@@ -30,21 +94,57 @@ fn write_file(path: String, content: String) -> Result<WriteFileResult, String> 
     }
 
     let canonical_path = std::fs::canonicalize(&path).map_err(|error| error.to_string())?;
-    let confirmed_path = canonical_path.to_string_lossy();
-    let confirmed_path = confirmed_path
-        .strip_prefix(r"\\?\UNC\")
-        .map(|path| format!(r"\\{path}"))
-        .or_else(|| {
-            confirmed_path
-                .strip_prefix(r"\\?\")
-                .map(ToOwned::to_owned)
-        })
-        .unwrap_or_else(|| confirmed_path.into_owned());
+    let confirmed_path = display_path(&canonical_path);
 
     Ok(WriteFileResult {
         path: confirmed_path,
         content: saved_content,
     })
+}
+
+#[tauri::command]
+fn open_devtools(webview: tauri::WebviewWindow) {
+    webview.open_devtools();
+}
+
+#[cfg(target_os = "windows")]
+#[tauri::command]
+fn open_emoji_picker() -> Result<(), String> {
+    use std::mem::size_of;
+    use windows::Win32::UI::Input::KeyboardAndMouse::{
+        SendInput, INPUT, INPUT_0, INPUT_KEYBOARD, KEYBDINPUT, KEYEVENTF_KEYUP, VK_LWIN,
+        VK_OEM_PERIOD,
+    };
+
+    let key = |virtual_key, flags| INPUT {
+        r#type: INPUT_KEYBOARD,
+        Anonymous: INPUT_0 {
+            ki: KEYBDINPUT {
+                wVk: virtual_key,
+                wScan: 0,
+                dwFlags: flags,
+                time: 0,
+                dwExtraInfo: 0,
+            },
+        },
+    };
+    let inputs = [
+        key(VK_LWIN, Default::default()),
+        key(VK_OEM_PERIOD, Default::default()),
+        key(VK_OEM_PERIOD, KEYEVENTF_KEYUP),
+        key(VK_LWIN, KEYEVENTF_KEYUP),
+    ];
+    let sent = unsafe { SendInput(&inputs, size_of::<INPUT>() as i32) };
+    if sent != inputs.len() as u32 {
+        return Err("Could not open the Windows emoji picker.".to_string());
+    }
+    Ok(())
+}
+
+#[cfg(not(target_os = "windows"))]
+#[tauri::command]
+fn open_emoji_picker() -> Result<(), String> {
+    Err("The emoji picker is only available on Windows.".to_string())
 }
 
 #[cfg(target_os = "windows")]
@@ -79,9 +179,7 @@ async fn print_to_pdf(webview: tauri::WebviewWindow, path: String) -> Result<(),
     use std::os::windows::ffi::OsStrExt;
     use std::sync::mpsc;
     use webview2_com::{
-        Microsoft::Web::WebView2::Win32::{
-            ICoreWebView2Environment6, ICoreWebView2_7,
-        },
+        Microsoft::Web::WebView2::Win32::{ICoreWebView2Environment6, ICoreWebView2_7},
         PrintToPdfCompletedHandler,
     };
     use windows::core::{Interface, PCWSTR};
@@ -125,19 +223,16 @@ async fn print_to_pdf(webview: tauri::WebviewWindow, path: String) -> Result<(),
                         .SetMarginRight(0.0)
                         .map_err(|error| error.to_string())?;
 
-                    let callback = PrintToPdfCompletedHandler::create(Box::new(
-                        move |error, succeeded| {
-                            let result = error
-                                .map_err(|error| error.to_string())
-                                .and_then(|_| {
-                                    succeeded
-                                        .then_some(())
-                                        .ok_or_else(|| "WebView2 未能生成 PDF".to_string())
-                                });
+                    let callback =
+                        PrintToPdfCompletedHandler::create(Box::new(move |error, succeeded| {
+                            let result = error.map_err(|error| error.to_string()).and_then(|_| {
+                                succeeded
+                                    .then_some(())
+                                    .ok_or_else(|| "WebView2 未能生成 PDF".to_string())
+                            });
                             let _ = callback_sender.send(result);
                             Ok(())
-                        },
-                    ));
+                        }));
                     let wide_path = std::ffi::OsStr::new(&path)
                         .encode_wide()
                         .chain(once(0))
@@ -178,9 +273,13 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             read_file,
+            rename_file,
+            delete_file,
             write_file,
             take_installer_language,
-            print_to_pdf
+            print_to_pdf,
+            open_devtools,
+            open_emoji_picker
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -188,7 +287,7 @@ pub fn run() {
 
 #[cfg(test)]
 mod tests {
-    use super::write_file;
+    use super::{delete_file, write_file};
 
     #[test]
     fn write_file_overwrites_existing_content() {
@@ -205,14 +304,38 @@ mod tests {
         )
         .expect("write modified content");
 
-        assert_eq!(
-            std::path::Path::new(&result.path),
-            path,
-        );
+        assert_eq!(std::path::Path::new(&result.path), path,);
         assert_eq!(result.content, "new modified content");
         assert_eq!(
             std::fs::read_to_string(path).expect("read saved content"),
             "new modified content",
         );
+    }
+
+    #[test]
+    fn delete_file_removes_one_regular_file() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("target")
+            .join("delete-file-test.md");
+        std::fs::create_dir_all(path.parent().expect("test path has a parent"))
+            .expect("create test output directory");
+        std::fs::write(&path, "temporary").expect("seed test file");
+
+        delete_file(path.to_string_lossy().into_owned()).expect("delete test file");
+
+        assert!(!path.exists());
+    }
+
+    #[test]
+    fn delete_file_rejects_directories() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("target")
+            .join("delete-directory-test");
+        std::fs::create_dir_all(&path).expect("create test directory");
+
+        let error = delete_file(path.to_string_lossy().into_owned()).expect_err("reject directory");
+
+        assert!(error.contains("regular file"));
+        assert!(path.is_dir());
     }
 }
