@@ -43,3 +43,7 @@ Desktop.ini
 
 # Test coverage
 coverage/
+
+# Private software copyright registration materials
+softcopyright-output/
+scripts/generate-softcopyright-source.mjs
