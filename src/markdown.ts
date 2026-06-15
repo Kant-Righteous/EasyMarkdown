@@ -6,6 +6,19 @@ import { tasklist } from "@mdit/plugin-tasklist";
 import { renderLimitedMdx } from "./limitedMdx.ts";
 import { renderMermaidDiagrams } from "./mermaid.ts";
 
+function quoteCopySource(source: string, start: number, end: number): string {
+  return source
+    .split(/\r\n|\n|\r/)
+    .slice(start, end)
+    .map((line) => line.replace(/^\s{0,3}>\s?/, ""))
+    .join("\n")
+    .replace(/\n+$/, "");
+}
+
+function copyAttributes(markdown: MarkdownIt, source: string): string {
+  return `class="preview-copy-block" data-copy-source="${markdown.utils.escapeHtml(source)}"`;
+}
+
 function addSourceLineAnchors(markdown: MarkdownIt): void {
   markdown.core.ruler.after("block", "source_line_anchors", (state) => {
     const offset =
@@ -85,6 +98,88 @@ function addMermaidFence(markdown: MarkdownIt): void {
   };
 }
 
+function addCopyableBlocks(markdown: MarkdownIt): void {
+  markdown.core.ruler.after("source_line_anchors", "copyable_blocks", (state) => {
+    for (const token of state.tokens) {
+      if (!token.map) continue;
+
+      if (token.type === "blockquote_open") {
+        token.attrJoin("class", "preview-copy-block");
+        token.attrSet(
+          "data-copy-source",
+          quoteCopySource(state.src, token.map[0], token.map[1]),
+        );
+      } else if (
+        token.type === "fence" ||
+        token.type === "code_block" ||
+        token.type === "math_block"
+      ) {
+        token.meta = { ...token.meta, copySource: token.content };
+      }
+    }
+  });
+
+  for (const ruleName of ["fence", "code_block"] as const) {
+    const defaultRule = markdown.renderer.rules[ruleName];
+    if (!defaultRule) continue;
+
+    markdown.renderer.rules[ruleName] = (
+      tokens,
+      index,
+      options,
+      environment,
+      renderer,
+    ) => {
+      const html = defaultRule(
+        tokens,
+        index,
+        options,
+        environment,
+        renderer,
+      );
+      const source = tokens[index].meta?.copySource;
+      if (typeof source !== "string") return html;
+
+      if (html.startsWith('<div class="mermaid-diagram"')) {
+        return html.replace(
+          '<div class="mermaid-diagram"',
+          `<div class="mermaid-diagram preview-copy-block" data-copy-source="${markdown.utils.escapeHtml(source)}"`,
+        );
+      }
+      return html.replace(
+        /^<pre/,
+        `<pre ${copyAttributes(markdown, source)}`,
+      );
+    };
+  }
+
+  const defaultMathBlock = markdown.renderer.rules.math_block;
+  if (defaultMathBlock) {
+    markdown.renderer.rules.math_block = (
+      tokens,
+      index,
+      options,
+      environment,
+      renderer,
+    ) => {
+      const html = defaultMathBlock(
+        tokens,
+        index,
+        options,
+        environment,
+        renderer,
+      );
+      const source = tokens[index].meta?.copySource;
+      if (typeof source !== "string") return html;
+
+      return html.replace(
+        /^<p class=['"]katex-block['"]>/,
+        `<p class="katex-block preview-copy-block" data-copy-source="${markdown.utils.escapeHtml(source)}">`,
+      );
+    };
+  }
+}
+
 export function createMarkdownRenderer(): MarkdownIt {
   const markdown = new MarkdownIt({
     html: false,
@@ -98,12 +193,13 @@ export function createMarkdownRenderer(): MarkdownIt {
   });
   markdown.use(footnote);
   markdown.use(tasklist, {
-    disabled: true,
+    disabled: false,
     label: true,
   });
   markdown.use(mark);
   addSourceLineAnchors(markdown);
   addMermaidFence(markdown);
+  addCopyableBlocks(markdown);
 
   const defaultLinkOpen =
     markdown.renderer.rules.link_open ??

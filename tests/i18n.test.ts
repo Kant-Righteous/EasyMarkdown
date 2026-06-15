@@ -128,3 +128,19 @@ test("Mermaid errors have localized fallback text", () => {
 
   setLanguage("zh-CN", storage());
 });
+
+test("preview block copy controls have localized labels", () => {
+  setLanguage("zh-CN", storage());
+  assert.equal(t("preview.copyBlock"), "复制");
+  assert.equal(t("preview.copySuccess"), "已复制");
+
+  setLanguage("en", storage());
+  assert.equal(t("preview.copyBlock"), "Copy");
+  assert.equal(t("preview.copySuccess"), "Copied");
+
+  setLanguage("fr", storage());
+  assert.equal(t("preview.copyBlock"), "Copier");
+  assert.equal(t("preview.copySuccess"), "Copié");
+
+  setLanguage("zh-CN", storage());
+});

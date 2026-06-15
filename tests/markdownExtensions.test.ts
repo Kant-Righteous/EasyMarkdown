@@ -26,13 +26,21 @@ test("renders footnote references and definitions", () => {
   );
 });
 
-test("renders disabled task-list checkboxes", () => {
+test("renders enabled task-list checkboxes with source lines", () => {
   const html = renderMarkdown("- [ ] 待办\n- [x] 完成");
 
   assert.match(html, /class="task-list-container"/);
-  assert.match(html, /class="task-list-item"/);
-  assert.match(html, /<input[^>]*type="checkbox"[^>]*disabled/);
-  assert.match(html, /<input[^>]*type="checkbox"[^>]*checked[^>]*disabled/);
+  assert.match(
+    html,
+    /<li[^>]*data-source-line="0"[^>]*class="task-list-item"/,
+  );
+  assert.match(
+    html,
+    /<li[^>]*data-source-line="1"[^>]*class="task-list-item"/,
+  );
+  assert.match(html, /<input[^>]*type="checkbox"/);
+  assert.doesNotMatch(html, /<input[^>]*disabled/);
+  assert.match(html, /<input[^>]*checked/);
 });
 
 test("renders marked text", () => {
@@ -49,4 +57,23 @@ test("extended syntax keeps link safety and source anchors", () => {
   assert.match(html, /<h1 data-source-line="0">/);
   assert.match(html, /data-external-link="true"/);
   assert.match(html, /rel="noopener noreferrer"/);
+});
+
+test("marks quote, code and formula blocks with reusable copy source", () => {
+  const html = renderMarkdown(
+    "> quote **text**\n\n```ts\nconst value = 1;\n```\n\n$$\nx^2\n$$",
+  );
+
+  assert.match(
+    html,
+    /<blockquote[^>]*class="preview-copy-block"[^>]*data-copy-source="quote \*\*text\*\*"/,
+  );
+  assert.match(
+    html,
+    /<pre[^>]*class="preview-copy-block"[^>]*data-copy-source="const value = 1;\n"/,
+  );
+  assert.match(
+    html,
+    /class="katex-block preview-copy-block"[^>]*data-copy-source="x\^2\n"/,
+  );
 });

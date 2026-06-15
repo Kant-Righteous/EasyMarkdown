@@ -2,7 +2,12 @@ import "./style.css";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { message } from "@tauri-apps/plugin-dialog";
-import { getContent, onEditorInput, setContent } from "./editor";
+import {
+  getContent,
+  onEditorInput,
+  setContent,
+  setContentPreservingView,
+} from "./editor";
 import { renderMarkdown } from "./markdown";
 import { renderMermaidDiagrams } from "./mermaid";
 import { bindShortcuts } from "./shortcuts";
@@ -22,6 +27,11 @@ import { bindSidebar } from "./sidebar";
 import { bindSplitPane } from "./splitPane";
 import { bindFileDrop } from "./fileDrop";
 import { bindContextMenu } from "./contextMenu";
+import { bindTaskListInteraction } from "./taskListInteraction";
+import {
+  bindPreviewBlockCopy,
+  decoratePreviewCopyBlocks,
+} from "./previewBlockCopy";
 
 let previewTimer: number | undefined;
 let syncPreviewScroll = (): void => {};
@@ -31,9 +41,13 @@ function updatePreview(): void {
   const preview = document.querySelector<HTMLElement>("#preview");
   if (preview) {
     preview.innerHTML = renderMarkdown(getContent());
+    decoratePreviewCopyBlocks(preview);
     syncPreviewScroll();
     refreshSidebarOutline();
-    void renderMermaidDiagrams(preview).then(syncPreviewScroll);
+    void renderMermaidDiagrams(preview).then(() => {
+      decoratePreviewCopyBlocks(preview);
+      syncPreviewScroll();
+    });
   }
 }
 
@@ -84,6 +98,15 @@ window.addEventListener("DOMContentLoaded", async () => {
   bindShortcuts();
   bindAiMode();
   bindPreviewLinks();
+  const preview = document.querySelector<HTMLElement>("#preview");
+  if (preview) {
+    bindTaskListInteraction(
+      preview,
+      getContent,
+      setContentPreservingView,
+    );
+    bindPreviewBlockCopy(preview);
+  }
   bindContentZoom();
   refreshSidebarOutline = bindSidebar().refreshOutline;
   bindSplitPane();
@@ -98,6 +121,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     } else {
       updateChrome();
     }
+    updatePreview();
   });
   applyViewMode(getState().viewMode);
 

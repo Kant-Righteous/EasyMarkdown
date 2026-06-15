@@ -179,10 +179,35 @@ test("preview styles cover all toolbar Markdown extensions", () => {
   assert.match(styles, /@import\s+"katex\/dist\/katex\.min\.css";/);
   assert.match(styles, /#preview \.katex-display\s*\{/);
   assert.match(styles, /#preview \.task-list-container\s*\{/);
+  assert.match(
+    styles,
+    /#preview \.task-list-item-checkbox\s*\{[^}]*cursor:\s*pointer;/s,
+  );
   assert.match(styles, /#preview \.footnotes\s*\{/);
   assert.match(styles, /#preview mark\s*\{/);
   assert.match(styles, /#preview \.mermaid-diagram\s*\{/);
   assert.match(styles, /#preview \.mermaid-error\s*\{/);
+  assert.match(
+    styles,
+    /#preview \.preview-copy-block\s*\{[^}]*position:\s*relative;/s,
+  );
+  assert.match(
+    styles,
+    /#preview \.preview-copy-button\s*\{[^}]*position:\s*absolute;[^}]*top:[^;]+;[^}]*right:[^;]+;/s,
+  );
+  assert.match(styles, /#preview \.preview-copy-button\.is-copied\s*\{/);
+  assert.match(
+    styles,
+    /#preview blockquote\.preview-copy-block > \.preview-copy-button\s*\{[^}]*position:\s*relative;[^}]*float:\s*right;/s,
+  );
+  assert.match(
+    styles,
+    /#preview pre\.preview-copy-block\s*\{[^}]*padding-right:\s*52px;/s,
+  );
+  assert.match(
+    styles,
+    /#preview :is\(\.katex-block,\s*\.mermaid-diagram\)\.preview-copy-block\s*\{[^}]*padding-top:\s*44px;/s,
+  );
 });
 
 test("print styles cover all toolbar Markdown extensions", () => {

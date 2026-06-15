@@ -32,6 +32,24 @@ export function setContent(content: string): void {
   notifyInput();
 }
 
+export function setContentPreservingView(content: string): void {
+  const element = editor();
+  const selectionStart = Math.min(element.selectionStart, content.length);
+  const selectionEnd = Math.min(element.selectionEnd, content.length);
+  const selectionDirection = element.selectionDirection;
+  const { scrollTop, scrollLeft } = element;
+
+  element.value = content;
+  element.setSelectionRange(
+    selectionStart,
+    selectionEnd,
+    selectionDirection,
+  );
+  element.scrollTop = scrollTop;
+  element.scrollLeft = scrollLeft;
+  notifyInput();
+}
+
 export function focusEditor(): void {
   editor().focus();
 }

@@ -36,5 +36,8 @@ test("预览块包含对应的 Markdown 源码行锚点", () => {
 
   assert.match(html, /<h1 data-source-line="0">/);
   assert.match(html, /<p data-source-line="2">Paragraph<\/p>/);
-  assert.match(html, /<pre data-source-line="4"><code class="language-ts">/);
+  assert.match(
+    html,
+    /<pre[^>]*data-source-line="4"[^>]*><code class="language-ts">/,
+  );
 });
