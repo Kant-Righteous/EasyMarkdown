@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const expectedVersion = "1.1.0";
+const expectedVersion = "1.1.1";
 
 test("application and installer versions are consistent", async () => {
   const packageJson = JSON.parse(

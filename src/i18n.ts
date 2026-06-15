@@ -148,6 +148,8 @@ const translations: Record<Language, Record<string, string>> = {
     "command.inlineFormula": "公式",
     "command.footnote": "脚注内容",
     "preview.mermaidError": "图表语法有误，已保留源码。",
+    "preview.copyBlock": "复制",
+    "preview.copySuccess": "已复制",
     "command.column1": "列1",
     "command.column2": "列2",
     "command.column3": "列3",
@@ -324,6 +326,8 @@ const translations: Record<Language, Record<string, string>> = {
     "command.footnote": "Footnote text",
     "preview.mermaidError":
       "The diagram syntax is invalid. The source has been preserved.",
+    "preview.copyBlock": "Copy",
+    "preview.copySuccess": "Copied",
     "command.column1": "Column 1",
     "command.column2": "Column 2",
     "command.column3": "Column 3",
@@ -503,6 +507,8 @@ const translations: Record<Language, Record<string, string>> = {
     "command.footnote": "Texte de la note",
     "preview.mermaidError":
       "La syntaxe du diagramme est invalide. Le code source a été conservé.",
+    "preview.copyBlock": "Copier",
+    "preview.copySuccess": "Copié",
     "command.column1": "Colonne 1",
     "command.column2": "Colonne 2",
     "command.column3": "Colonne 3",
