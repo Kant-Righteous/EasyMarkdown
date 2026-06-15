@@ -174,48 +174,112 @@
               <path d="M3 4h18v16H3V4Zm2 2v12h4V6H5Zm6 0v12h8V6h-8Z"></path>
             </svg>
           </button>
-          <div class="format-group" role="group" aria-label="标题" data-i18n-aria-label="format.headingGroup">
+          <div class="format-group" data-format-group="headingGroup" role="group" aria-label="标题" data-i18n-aria-label="format.headingGroup">
             <span class="format-label" data-i18n="format.heading">标题</span>
-            <button type="button" data-command="h1" title="一级标题" data-i18n-title="format.h1">H1</button>
-            <button type="button" data-command="h2" title="二级标题" data-i18n-title="format.h2">H2</button>
-            <button type="button" data-command="h3" title="三级标题" data-i18n-title="format.h3">H3</button>
+            <div class="format-primary">
+              <button type="button" class="format-command" data-command="h1" title="一级标题" aria-label="一级标题" data-i18n-title="format.h1" data-i18n-aria-label="format.h1"><span class="format-symbol">H1</span></button>
+              <button type="button" class="format-command" data-command="h2" title="二级标题" aria-label="二级标题" data-i18n-title="format.h2" data-i18n-aria-label="format.h2"><span class="format-symbol">H2</span></button>
+              <button type="button" class="format-command" data-command="h3" title="三级标题" aria-label="三级标题" data-i18n-title="format.h3" data-i18n-aria-label="format.h3"><span class="format-symbol">H3</span></button>
+            </div>
+            <div class="submenu format-overflow">
+              <button type="button" class="format-command format-overflow-trigger submenu-trigger" title="更多标题功能" aria-label="更多标题功能" data-i18n-title="format.moreHeading" data-i18n-aria-label="format.moreHeading" aria-haspopup="menu" aria-expanded="false" hidden>
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg>
+              </button>
+              <div class="format-overflow-panel dropdown-panel submenu-panel" role="menu" hidden></div>
+            </div>
           </div>
 
-          <div class="format-group" role="group" aria-label="文字强调" data-i18n-aria-label="format.emphasisGroup">
+          <div class="format-group" data-format-group="emphasisGroup" role="group" aria-label="文字强调" data-i18n-aria-label="format.emphasisGroup">
             <span class="format-label" data-i18n="format.emphasis">强调</span>
-            <button type="button" data-command="bold" title="加粗" data-i18n-title="format.bold">
-              <strong>B</strong>
-            </button>
-            <button
-              type="button"
-              class="italic-button"
-              data-command="italic"
-              title="斜体"
-              data-i18n-title="format.italic"
-            >
-              <em>I</em>
-            </button>
+            <div class="format-primary">
+              <button type="button" class="format-command" data-command="bold" title="加粗" aria-label="加粗" data-i18n-title="format.bold" data-i18n-aria-label="format.bold"><strong class="format-symbol">B</strong></button>
+              <button type="button" class="format-command italic-button" data-command="italic" data-overflow-command title="斜体" aria-label="斜体" data-i18n-title="format.italic" data-i18n-aria-label="format.italic"><em class="format-symbol">I</em></button>
+              <button type="button" class="format-command" data-command="underline" data-overflow-command title="下划线" aria-label="下划线" data-i18n-title="format.underline" data-i18n-aria-label="format.underline"><span class="format-symbol format-underline">U</span></button>
+              <button type="button" class="format-command" data-command="strikethrough" data-overflow-command title="删除线" aria-label="删除线" data-i18n-title="format.strikethrough" data-i18n-aria-label="format.strikethrough"><span class="format-symbol"><s>S</s></span></button>
+              <button type="button" class="format-command" data-command="highlight" title="高亮" aria-label="高亮" data-i18n-title="format.highlight" data-i18n-aria-label="format.highlight">
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 15 7-10 4 3-7 10H7v-3Z"></path><path d="M5 20h14"></path></svg>
+              </button>
+            </div>
+            <div class="submenu format-overflow">
+              <button type="button" class="format-command format-overflow-trigger submenu-trigger" title="更多强调功能" aria-label="更多强调功能" data-i18n-title="format.moreEmphasis" data-i18n-aria-label="format.moreEmphasis" aria-haspopup="menu" aria-expanded="false" hidden>
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg>
+              </button>
+              <div class="format-overflow-panel dropdown-panel submenu-panel" role="menu" hidden></div>
+            </div>
           </div>
 
-          <div class="format-group" role="group" aria-label="列表" data-i18n-aria-label="format.listGroup">
+          <div class="format-group" data-format-group="listGroup" role="group" aria-label="列表" data-i18n-aria-label="format.listGroup">
             <span class="format-label" data-i18n="format.list">列表</span>
-            <button type="button" data-command="unordered-list" data-i18n="format.unordered">• 无序</button>
-            <button type="button" data-command="ordered-list" data-i18n="format.ordered">1. 有序</button>
+            <div class="format-primary">
+              <button type="button" class="format-command" data-command="unordered-list" title="无序列表" aria-label="无序列表" data-i18n-title="format.unordered" data-i18n-aria-label="format.unordered">
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="7" r="1.5"></circle><circle cx="5" cy="12" r="1.5"></circle><circle cx="5" cy="17" r="1.5"></circle><path d="M9 7h10M9 12h10M9 17h10"></path></svg>
+              </button>
+              <button type="button" class="format-command" data-command="ordered-list" title="有序列表" aria-label="有序列表" data-i18n-title="format.ordered" data-i18n-aria-label="format.ordered">
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h1v4M3.5 9h3M4 14.5c.3-.7 1-1.2 1.8-1.2 1 0 1.8.6 1.8 1.5 0 1-1.1 1.8-3.5 4h3.7M10 7h10M10 12h10M10 17h10"></path></svg>
+              </button>
+              <button type="button" class="format-command" data-command="task-list" data-overflow-command title="任务列表" aria-label="任务列表" data-i18n-title="format.task" data-i18n-aria-label="format.task">
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="5" height="5" rx="1"></rect><rect x="3.5" y="14.5" width="5" height="5" rx="1"></rect><path d="m4.7 6.9 1.2 1.2 2.2-2.5M12 7h8M12 17h8"></path></svg>
+              </button>
+            </div>
+            <div class="submenu format-overflow">
+              <button type="button" class="format-command format-overflow-trigger submenu-trigger" title="更多列表功能" aria-label="更多列表功能" data-i18n-title="format.moreList" data-i18n-aria-label="format.moreList" aria-haspopup="menu" aria-expanded="false" hidden>
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg>
+              </button>
+              <div class="format-overflow-panel dropdown-panel submenu-panel" role="menu" hidden></div>
+            </div>
           </div>
 
-          <div class="format-group" role="group" aria-label="块级格式" data-i18n-aria-label="format.blockGroup">
+          <div class="format-group" data-format-group="blockGroup" role="group" aria-label="块级格式" data-i18n-aria-label="format.blockGroup">
             <span class="format-label" data-i18n="format.block">块级</span>
-            <button type="button" data-command="blockquote" data-i18n="format.quote">“ 引用</button>
-            <button type="button" data-command="code-block" data-i18n="format.code">&lt;/&gt; 代码</button>
+            <div class="format-primary">
+              <button type="button" class="format-command" data-command="blockquote" title="引用" aria-label="引用" data-i18n-title="format.quote" data-i18n-aria-label="format.quote">
+                <svg class="format-icon format-icon-quote" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7H6a2 2 0 0 0-2 2v4h5v1a4 4 0 0 1-4 4M20 7h-4a2 2 0 0 0-2 2v4h5v1a4 4 0 0 1-4 4"></path></svg>
+              </button>
+              <button type="button" class="format-command" data-command="code-block" title="代码块" aria-label="代码块" data-i18n-title="format.code" data-i18n-aria-label="format.code">
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="m9 9-3 3 3 3M15 9l3 3-3 3"></path></svg>
+              </button>
+              <button type="button" class="format-command" data-command="formula-block" title="公式块" aria-label="公式块" data-i18n-title="format.formulaBlock" data-i18n-aria-label="format.formulaBlock"><span class="format-symbol">∑</span></button>
+              <button type="button" class="format-command" data-command="chart" title="图表" aria-label="图表" data-i18n-title="format.chart" data-i18n-aria-label="format.chart">
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="6" height="5" rx="1"></rect><rect x="15" y="15" width="6" height="5" rx="1"></rect><path d="M9 6.5h4a3 3 0 0 1 3 3V15M12.5 12.5 16 15l3.5-2.5"></path></svg>
+              </button>
+            </div>
+            <div class="submenu format-overflow">
+              <button type="button" class="format-command format-overflow-trigger submenu-trigger" title="更多块级功能" aria-label="更多块级功能" data-i18n-title="format.moreBlock" data-i18n-aria-label="format.moreBlock" aria-haspopup="menu" aria-expanded="false" hidden>
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg>
+              </button>
+              <div class="format-overflow-panel dropdown-panel submenu-panel" role="menu" hidden></div>
+            </div>
           </div>
 
-          <div class="format-group" role="group" aria-label="插入" data-i18n-aria-label="format.insertGroup">
+          <div class="format-group" data-format-group="insertGroup" role="group" aria-label="插入" data-i18n-aria-label="format.insertGroup">
             <span class="format-label" data-i18n="format.insert">插入</span>
-            <button type="button" data-command="link" title="链接" data-i18n-title="format.link" data-i18n="format.link">
-              ↗ 链接
-            </button>
-            <button type="button" data-command="table" data-i18n="format.table">▦ 表格</button>
-            <button type="button" data-command="horizontal-rule" data-i18n="format.rule">— 横线</button>
+            <div class="format-primary">
+              <button type="button" class="format-command" data-command="link" title="超链接" aria-label="超链接" data-i18n-title="format.link" data-i18n-aria-label="format.link">
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 14.5 14.5 9M7.5 16.5l-1 1a3.5 3.5 0 0 1-5-5l4-4a3.5 3.5 0 0 1 5 0M16.5 7.5l1-1a3.5 3.5 0 0 1 5 5l-4 4a3.5 3.5 0 0 1-5 0"></path></svg>
+              </button>
+              <button type="button" class="format-command" data-command="image" title="图片" aria-label="图片" data-i18n-title="format.image" data-i18n-aria-label="format.image">
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8" cy="9" r="1.5"></circle><path d="m5 18 5-5 3 3 2-2 4 4"></path></svg>
+              </button>
+              <button type="button" class="format-command" data-command="table" data-overflow-command title="表格" aria-label="表格" data-i18n-title="format.table" data-i18n-aria-label="format.table">
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18M9 4v16M15 4v16"></path></svg>
+              </button>
+              <button type="button" class="format-command" data-command="horizontal-rule" data-overflow-command title="水平分割线" aria-label="水平分割线" data-i18n-title="format.rule" data-i18n-aria-label="format.rule">
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18"></path></svg>
+              </button>
+              <button type="button" class="format-command" data-command="inline-code" title="内联代码" aria-label="内联代码" data-i18n-title="format.inlineCode" data-i18n-aria-label="format.inlineCode">
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 8-4 4 4 4M15 8l4 4-4 4M13 5l-2 14"></path></svg>
+              </button>
+              <button type="button" class="format-command" data-command="inline-formula" title="内联公式" aria-label="内联公式" data-i18n-title="format.inlineFormula" data-i18n-aria-label="format.inlineFormula"><span class="format-symbol">ƒx</span></button>
+              <button type="button" class="format-command" data-command="footnote" data-overflow-command title="脚注" aria-label="脚注" data-i18n-title="format.footnote" data-i18n-aria-label="format.footnote">
+                <svg class="format-icon format-icon-footnote" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h8M4 12h7M4 17h13M16 6l2-1v6M16 11h4"></path></svg>
+              </button>
+            </div>
+            <div class="submenu format-overflow">
+              <button type="button" class="format-command format-overflow-trigger submenu-trigger" title="更多插入功能" aria-label="更多插入功能" data-i18n-title="format.moreInsert" data-i18n-aria-label="format.moreInsert" aria-haspopup="menu" aria-expanded="false" hidden>
+                <svg class="format-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg>
+              </button>
+              <div class="format-overflow-panel dropdown-panel submenu-panel" role="menu" hidden></div>
+            </div>
           </div>
         </div>
 

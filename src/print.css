@@ -248,6 +248,72 @@ body {
   object-fit: contain;
 }
 
+.markdown-print-body .katex-display {
+  max-width: 100%;
+  overflow: hidden;
+  padding-block: 0.2em;
+}
+
+.markdown-print-body .task-list-container {
+  padding-left: 0;
+  list-style: none;
+}
+
+.markdown-print-body .task-list-item {
+  list-style: none;
+}
+
+.markdown-print-body .task-list-item-checkbox {
+  margin: 0 0.5em 0 0;
+  vertical-align: -0.08em;
+}
+
+.markdown-print-body .footnotes {
+  margin-top: 1.8em;
+  padding-top: 0.7em;
+  border-top: 1px solid #cbd5e1;
+  color: #475569;
+  font-size: 9pt;
+}
+
+.markdown-print-body .footnotes-sep {
+  display: none;
+}
+
+.markdown-print-body mark {
+  padding: 0.04em 0.16em;
+  border-radius: 2px;
+  color: inherit;
+  background: #fef08a;
+}
+
+.markdown-print-body .mermaid-diagram {
+  max-width: 100%;
+  margin: 1em auto;
+  overflow: hidden;
+  text-align: center;
+  break-inside: avoid;
+}
+
+.markdown-print-body .mermaid-diagram svg {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.markdown-print-body .mermaid-source {
+  text-align: left;
+}
+
+.markdown-print-body .mermaid-error {
+  margin: 0.5em 0 0;
+  color: #991b1b;
+  font-size: 9pt;
+  text-align: left;
+}
+
 .markdown-print-body pre,
 .markdown-print-body blockquote,
 .markdown-print-body table,

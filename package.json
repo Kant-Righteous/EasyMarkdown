@@ -12,10 +12,16 @@
     "copyright:source": "node scripts/generate-softcopyright-source.mjs"
   },
   "dependencies": {
+    "@mdit/plugin-footnote": "^0.23.2",
+    "@mdit/plugin-katex": "^0.25.2",
+    "@mdit/plugin-mark": "^0.23.2",
+    "@mdit/plugin-tasklist": "^0.23.2",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "^2.7.1",
     "@tauri-apps/plugin-opener": "^2",
-    "markdown-it": "^14.2.0"
+    "katex": "^0.17.0",
+    "markdown-it": "^14.2.0",
+    "mermaid": "^11.15.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",

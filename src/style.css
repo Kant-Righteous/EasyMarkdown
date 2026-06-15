@@ -1,3 +1,5 @@
+@import "katex/dist/katex.min.css";
+
 :root {
   --content-zoom: 1;
   --bg-app: oklch(0.955 0 0);
@@ -294,19 +296,30 @@ button:focus-visible {
 }
 
 .format-bar {
-  flex-wrap: wrap;
-  gap: 6px;
-  min-height: 38px;
-  padding: 4px 8px;
+  width: 100%;
+  max-width: 100vw;
+  flex-wrap: nowrap;
+  gap: 5px;
+  min-height: 42px;
+  padding: 5px 8px;
   overflow: visible;
 }
 
 .format-group {
+  position: relative;
   gap: 1px;
   padding: 2px;
   border-radius: 6px;
   background: var(--bg-subtle);
   box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.format-primary,
+.format-overflow {
+  display: flex;
+  flex: none;
+  gap: 1px;
+  align-items: center;
 }
 
 .format-label {
@@ -317,9 +330,21 @@ button:focus-visible {
   user-select: none;
 }
 
+.format-command {
+  display: inline-flex;
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  min-height: 30px;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  line-height: 1;
+}
+
 .format-group button {
-  min-width: 32px;
-  min-height: 26px;
+  min-width: 30px;
+  min-height: 30px;
 }
 
 .format-group button:hover {
@@ -328,23 +353,85 @@ button:focus-visible {
   box-shadow: inset 0 0 0 1px var(--border-strong);
 }
 
+.format-icon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.format-overflow-trigger circle,
+.format-command[data-command="unordered-list"] circle {
+  fill: currentColor;
+  stroke: none;
+}
+
 .format-group button[data-command="bold"],
 .format-group button[data-command="italic"] {
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
 }
 
-.format-group button[data-command="link"] {
+.format-symbol {
   display: inline-flex;
-  gap: 6px;
   align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.format-underline {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .italic-button {
   font-family: Georgia, "Times New Roman", serif;
   font-size: 18px;
   font-weight: 700;
+}
+
+.format-bar.is-compact .format-label {
+  display: none;
+}
+
+.format-overflow-trigger[hidden] {
+  display: none;
+}
+
+.format-overflow-panel {
+  top: calc(100% + 5px);
+  right: 0;
+  left: auto;
+  width: 190px;
+  min-width: 190px;
+}
+
+.format-overflow-panel .format-command {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  width: 100%;
+  height: 34px;
+  min-height: 34px;
+  gap: 10px;
+  padding: 6px 10px;
+}
+
+.format-overflow-panel :is(.format-icon, .format-symbol) {
+  justify-self: center;
+}
+
+.format-menu-label {
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sidebar-toggle {
@@ -864,6 +951,82 @@ button:focus-visible {
   margin-left: auto;
 }
 
+#preview .katex-display {
+  width: min(100%, var(--preview-block-width));
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.25em;
+}
+
+#preview .task-list-container {
+  padding-left: 0;
+  list-style: none;
+}
+
+#preview .task-list-item {
+  list-style: none;
+}
+
+#preview .task-list-item-checkbox {
+  margin: 0 0.55em 0 0;
+  accent-color: var(--text);
+  vertical-align: -0.08em;
+}
+
+#preview .footnotes {
+  width: min(100%, var(--preview-text-width));
+  max-width: 100%;
+  margin-top: 2.2em;
+  padding-top: 0.8em;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.9em;
+}
+
+#preview .footnotes-sep {
+  display: none;
+}
+
+#preview .footnote-backref {
+  margin-left: 0.25em;
+  text-decoration: none;
+}
+
+#preview mark {
+  padding: 0.05em 0.2em;
+  border-radius: 3px;
+  color: inherit;
+  background: oklch(0.9 0.09 95);
+}
+
+#preview .mermaid-diagram {
+  width: min(100%, var(--preview-block-width));
+  max-width: 100%;
+  margin: 1.2em auto;
+  overflow-x: auto;
+  text-align: center;
+}
+
+#preview .mermaid-diagram svg {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+#preview .mermaid-source {
+  text-align: left;
+}
+
+#preview .mermaid-error {
+  margin: 0.55em 0 0;
+  color: oklch(0.46 0.16 28);
+  font-size: 0.86em;
+  text-align: left;
+}
+
 .workspace.view-edit,
 .workspace.view-preview {
   grid-template-columns: 1fr;
@@ -1051,34 +1214,11 @@ button:focus-visible {
     margin-left: auto;
   }
 
-  html:lang(en) .format-label,
-  html:lang(fr) .format-label {
-    display: none;
-  }
-
-  html:lang(en) .format-bar,
-  html:lang(fr) .format-bar {
-    gap: 4px;
-    padding-inline: 6px;
-  }
-
-  html:lang(en) .format-group button,
-  html:lang(fr) .format-group button {
-    padding-inline: 7px;
-  }
 }
 
 @media (max-width: 860px) {
   .menu-bar {
     gap: 8px;
-  }
-
-  .format-label {
-    display: none;
-  }
-
-  .format-bar {
-    gap: 4px;
   }
 
   .workspace {
@@ -1151,14 +1291,6 @@ button:focus-visible {
     padding-inline: 7px;
   }
 
-  .format-bar {
-    padding-inline: 6px;
-  }
-
-  .format-group button {
-    min-width: 28px;
-    padding-inline: 4px;
-  }
 }
 
 /* AI 对话模式 */

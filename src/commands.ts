@@ -1,9 +1,18 @@
 import {
+  getContent,
   getSelection,
   insertAtCursor,
   replaceSelection,
   wrapSelection,
 } from "./editor";
+import {
+  footnoteTemplate,
+  headingText,
+  nextFootnoteIndex,
+  orderedListText,
+  prefixedLines,
+  taskListText,
+} from "./formatting";
 import { t } from "./i18n";
 
 function defaultItems(): string {
@@ -12,24 +21,12 @@ function defaultItems(): string {
 
 function prefixLines(prefix: string, placeholder: string): void {
   const selection = getSelection();
-  const value = selection.text || placeholder;
-  replaceSelection(
-    value
-      .split("\n")
-      .map((line) => `${prefix}${line}`)
-      .join("\n"),
-  );
+  replaceSelection(prefixedLines(selection.text, prefix, placeholder));
 }
 
 function numberedLines(): void {
   const selection = getSelection();
-  const value = selection.text || defaultItems();
-  replaceSelection(
-    value
-      .split("\n")
-      .map((line, index) => `${index + 1}. ${line}`)
-      .join("\n"),
-  );
+  replaceSelection(orderedListText(selection.text, defaultItems()));
 }
 
 function insertBlock(content: string): void {
@@ -39,7 +36,8 @@ function insertBlock(content: string): void {
 }
 
 export function heading(level: 1 | 2 | 3): void {
-  prefixLines(`${"#".repeat(level)} `, t("command.heading"));
+  const selection = getSelection();
+  replaceSelection(headingText(selection.text, level, t("command.heading")));
 }
 
 export function bold(): void {
@@ -50,12 +48,29 @@ export function italic(): void {
   wrapSelection("*", "*", t("command.italic"));
 }
 
+export function underline(): void {
+  wrapSelection("<u>", "</u>", t("command.underline"));
+}
+
+export function strikethrough(): void {
+  wrapSelection("~~", "~~", t("command.strikethrough"));
+}
+
+export function highlight(): void {
+  wrapSelection("==", "==", t("command.highlight"));
+}
+
 export function unorderedList(): void {
   prefixLines("- ", defaultItems());
 }
 
 export function orderedList(): void {
   numberedLines();
+}
+
+export function taskList(): void {
+  const selection = getSelection();
+  replaceSelection(taskListText(selection.text, defaultItems()));
 }
 
 export function blockquote(): void {
@@ -66,8 +81,24 @@ export function codeBlock(): void {
   wrapSelection("```text\n", "\n```", t("command.code"));
 }
 
+export function formulaBlock(): void {
+  wrapSelection("$$\n", "\n$$", t("command.formula"));
+}
+
+export function chart(): void {
+  wrapSelection(
+    "```mermaid\n",
+    "\n```",
+    `flowchart TD\n  A[${t("command.chartStart")}] --> B[${t("command.chartEnd")}]`,
+  );
+}
+
 export function link(): void {
   wrapSelection("[", "](https://example.com)", t("command.link"));
+}
+
+export function image(): void {
+  wrapSelection("![", "](./image.png)", t("command.image"));
 }
 
 export function table(): void {
@@ -78,4 +109,17 @@ export function table(): void {
 
 export function horizontalRule(): void {
   insertBlock("---");
+}
+
+export function inlineCode(): void {
+  wrapSelection("`", "`", t("command.inlineCode"));
+}
+
+export function inlineFormula(): void {
+  wrapSelection("$", "$", t("command.inlineFormula"));
+}
+
+export function footnote(): void {
+  const index = nextFootnoteIndex(getContent());
+  insertBlock(footnoteTemplate(index, t("command.footnote")));
 }
