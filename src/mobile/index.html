@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>EasyMarkdown</title>
+    <script type="module" src="/main.ts" defer></script>
+  </head>
+  <body>
+    <main class="mobile-app" data-platform="mobile">
+      <header class="mobile-topbar">
+        <div>
+          <strong id="mobile-file-name">未命名.md</strong>
+          <span id="mobile-save-state">已保存</span>
+        </div>
+        <div class="mobile-view-switcher" role="group" aria-label="视图模式">
+          <button type="button" data-view="preview">预览</button>
+          <button type="button" data-view="split">分屏</button>
+          <button type="button" data-view="edit">编辑</button>
+        </div>
+      </header>
+
+      <section class="mobile-workspace view-split" id="workspace">
+        <div class="editor-pane">
+          <textarea
+            id="editor"
+            aria-label="Markdown 编辑区"
+            spellcheck="false"
+            placeholder="在这里输入 Markdown..."
+          ></textarea>
+        </div>
+        <article id="preview" class="preview-pane" aria-label="Markdown 预览区"></article>
+      </section>
+
+      <footer class="mobile-toolbar" aria-label="Markdown 格式工具栏">
+        <button type="button" data-command="h1">H1</button>
+        <button type="button" data-command="bold">加粗</button>
+        <button type="button" data-command="unordered-list">列表</button>
+        <button type="button" data-command="blockquote">引用</button>
+        <button type="button" data-command="link">链接</button>
+      </footer>
+    </main>
+  </body>
+</html>

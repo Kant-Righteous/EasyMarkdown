@@ -8,7 +8,7 @@ import {
   prefixedLines,
   taskListText,
   wrappedText,
-} from "../src/formatting.ts";
+} from "../src/shared/formatting.ts";
 
 test("标题命令替换已有标题级别而不是重复添加井号", () => {
   assert.equal(headingText("# 标题", 2, "标题"), "## 标题");

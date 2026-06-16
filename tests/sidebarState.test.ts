@@ -14,7 +14,7 @@ import {
   SIDEBAR_MIN_WIDTH,
   SIDEBAR_OPEN_KEY,
   SIDEBAR_WIDTH_KEY,
-} from "../src/sidebarState.ts";
+} from "../src/shared/state/sidebarState.ts";
 
 test("sidebar defaults open and persists explicit state", () => {
   const values = new Map<string, string>();

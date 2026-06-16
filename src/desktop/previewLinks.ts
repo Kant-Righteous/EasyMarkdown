@@ -1,6 +1,6 @@
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { t } from "./i18n";
-import { getBrowserUrl } from "./externalUrl";
+import { t } from "../shared/i18n/i18n";
+import { getBrowserUrl } from "../shared/utils/externalUrl";
 
 let previewLinksBound = false;
 

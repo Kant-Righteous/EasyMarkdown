@@ -13,7 +13,7 @@ import {
   prefixedLines,
   taskListText,
 } from "./formatting";
-import { t } from "./i18n";
+import { t } from "./i18n/i18n";
 
 function defaultItems(): string {
   return [t("command.item1"), t("command.item2"), t("command.item3")].join("\n");

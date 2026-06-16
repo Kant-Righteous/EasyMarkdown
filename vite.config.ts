@@ -3,13 +3,29 @@ import { defineConfig } from "vite";
 // @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
 
-// https://vite.dev/config/
-export default defineConfig(async () => ({
+const platformRoots: Record<string, string> = {
+  desktop: "src/desktop",
+  mobile: "src/mobile",
+};
 
+const platformOutDirs: Record<string, string> = {
+  desktop: "../../dist-desktop",
+  mobile: "../../dist-mobile",
+};
+
+// https://vite.dev/config/
+export default defineConfig(async ({ mode }) => {
+  const platform = mode === "mobile" ? "mobile" : "desktop";
+  return {
+  root: platformRoots[platform],
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent Vite from obscuring rust errors
   clearScreen: false,
+  build: {
+    outDir: platformOutDirs[platform],
+    emptyOutDir: true,
+  },
   // 2. tauri expects a fixed port, fail if that port is not available
   server: {
     port: 1420,
@@ -27,4 +43,5 @@ export default defineConfig(async () => ({
       ignored: ["**/src-tauri/**"],
     },
   },
-}));
+};
+});

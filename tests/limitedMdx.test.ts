@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { renderMarkdown } from "../src/markdown.ts";
+import { renderMarkdown } from "../src/shared/markdown/markdown.ts";
 
 test("renders Icon in a heading without exposing component source", () => {
   const html = renderMarkdown(

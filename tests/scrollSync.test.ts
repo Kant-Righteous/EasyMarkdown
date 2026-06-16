@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   calculateAnchoredScrollTop,
   calculateSyncedScrollTop,
-} from "../src/scrollSync.ts";
+} from "../src/desktop/scrollSync.ts";
 
 test("按可滚动距离比例同步滚动位置", () => {
   assert.equal(

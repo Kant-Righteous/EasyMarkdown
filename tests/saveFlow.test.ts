@@ -4,7 +4,7 @@ import {
   createSaveQueue,
   getSaveAsDefaultPath,
   performSave,
-} from "../src/saveFlow.ts";
+} from "../src/shared/utils/saveFlow.ts";
 
 test("取消另存为时不写入文件", async () => {
   let writeCount = 0;

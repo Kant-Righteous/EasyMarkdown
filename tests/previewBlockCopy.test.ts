@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { copyBlockSource } from "../src/previewBlockCopy.ts";
+import { copyBlockSource } from "../src/shared/markdown/previewBlockCopy.ts";
 
 test("reports success after writing the block source", async () => {
   let copied = "";

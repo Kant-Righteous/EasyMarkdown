@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { calculateDirtyState } from "../src/state.ts";
+import { calculateDirtyState } from "../src/shared/state/state.ts";
 
 test("相同内容保持已保存状态", () => {
   assert.equal(calculateDirtyState("# 文档", "# 文档"), false);

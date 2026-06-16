@@ -1,27 +1,27 @@
 import { invoke } from "@tauri-apps/api/core";
 import { message } from "@tauri-apps/plugin-dialog";
-import { getContent, onEditorInput } from "./editor";
+import { getContent, onEditorInput } from "../shared/editor";
 import {
   detachDeletedFile,
   openPathInCurrentWindow,
   openPathInNewWindow,
 } from "./file";
-import { subscribeLanguage, t } from "./i18n";
+import { subscribeLanguage, t } from "../shared/i18n/i18n";
 import {
   getVisibleOutlineItems,
   parseOutline,
   type OutlineItem,
-} from "./outline";
+} from "../shared/markdown/outline";
 import {
   getOutlineNavigationSurface,
   getPreviewHeadingSelector,
-} from "./outlineNavigation";
-import { getRecentDeleteDecision } from "./recentDelete";
+} from "../shared/markdown/outlineNavigation";
+import { getRecentDeleteDecision } from "../shared/utils/recentDelete";
 import {
   loadRecentFiles,
   removeRecentFile,
   subscribeRecentFiles,
-} from "./recentFiles";
+} from "../shared/utils/recentFiles";
 import {
   clampSidebarWidth,
   getSidebarWidthFromPointer,
@@ -35,8 +35,8 @@ import {
   SIDEBAR_MAX_WIDTH,
   SIDEBAR_MIN_WIDTH,
   type SidebarTab,
-} from "./sidebarState";
-import { getState, subscribe } from "./state";
+} from "../shared/state/sidebarState";
+import { getState, subscribe } from "../shared/state/state";
 
 const NEW_WINDOW_ICON =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.4l-8.3 8.3-1.4-1.4L17.6 5H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"></path></svg>';

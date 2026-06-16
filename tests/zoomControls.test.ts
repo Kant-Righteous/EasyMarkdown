@@ -3,8 +3,8 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const [html, styles] = await Promise.all([
-  readFile(new URL("../index.html", import.meta.url), "utf8"),
-  readFile(new URL("../src/style.css", import.meta.url), "utf8"),
+  readFile(new URL("../src/desktop/index.html", import.meta.url), "utf8"),
+  readFile(new URL("../src/desktop/style.css", import.meta.url), "utf8"),
 ]);
 
 test("状态栏包含共享缩放控件", () => {

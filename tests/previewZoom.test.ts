@@ -6,7 +6,7 @@ import {
   getNextPreviewZoom,
   normalizePreviewZoom,
   parsePreviewZoomInput,
-} from "../src/previewZoom.ts";
+} from "../src/desktop/previewZoom.ts";
 
 test("预览缩放限制在 50% 到 200%", () => {
   assert.equal(normalizePreviewZoom(0.2), 0.5);

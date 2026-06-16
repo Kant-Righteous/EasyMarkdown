@@ -4,10 +4,10 @@
   "version": "1.1.1",
   "identifier": "com.easymarkdown.app",
   "build": {
-    "beforeDevCommand": "npm run dev",
+    "beforeDevCommand": "npm run dev:desktop",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
-    "frontendDist": "../dist"
+    "beforeBuildCommand": "npm run build:desktop",
+    "frontendDist": "../dist-desktop"
   },
   "app": {
     "withGlobalTauri": true,

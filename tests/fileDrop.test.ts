@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   isSupportedDroppedFile,
   selectDroppedFile,
-} from "../src/fileDrop.ts";
+} from "../src/desktop/fileDrop.ts";
 
 test("file drop accepts Markdown and text files case-insensitively", () => {
   assert.equal(isSupportedDroppedFile("C:\\docs\\note.md"), true);

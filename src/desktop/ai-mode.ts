@@ -1,5 +1,5 @@
-import { insertAtCursor } from "./editor";
-import { t } from "./i18n";
+import { insertAtCursor } from "../shared/editor";
+import { t } from "../shared/i18n/i18n";
 
 let aiModeBound = false;
 

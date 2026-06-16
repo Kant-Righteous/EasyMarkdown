@@ -1,10 +1,10 @@
 import { invoke } from "@tauri-apps/api/core";
-import { getSelection, replaceSelection, undo } from "./editor";
+import { getSelection, replaceSelection, undo } from "../shared/editor";
 import { exportPdf } from "./exportPdf";
 import { saveAsFile } from "./file";
 import { renameFile } from "./fileRenameController";
-import { t } from "./i18n";
-import { getState } from "./state";
+import { t } from "../shared/i18n/i18n";
+import { getState } from "../shared/state/state";
 
 interface ContextMenuItem {
   label: string;

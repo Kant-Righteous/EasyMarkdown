@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { renderMarkdown } from "../src/markdown.ts";
+import { renderMarkdown } from "../src/shared/markdown/markdown.ts";
 
 test("renders inline and block formulas with KaTeX", () => {
   const html = renderMarkdown(

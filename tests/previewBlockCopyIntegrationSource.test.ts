@@ -3,9 +3,9 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const [mainSource, exportSource, copySource] = await Promise.all([
-  readFile(new URL("../src/main.ts", import.meta.url), "utf8"),
-  readFile(new URL("../src/exportPdf.ts", import.meta.url), "utf8"),
-  readFile(new URL("../src/previewBlockCopy.ts", import.meta.url), "utf8"),
+  readFile(new URL("../src/desktop/main.ts", import.meta.url), "utf8"),
+  readFile(new URL("../src/desktop/exportPdf.ts", import.meta.url), "utf8"),
+  readFile(new URL("../src/shared/markdown/previewBlockCopy.ts", import.meta.url), "utf8"),
 ]);
 
 test("live preview binds and decorates block copy controls", () => {

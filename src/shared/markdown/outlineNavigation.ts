@@ -1,4 +1,4 @@
-import type { ViewMode } from "./state";
+import type { ViewMode } from "../state/state";
 
 export type OutlineNavigationSurface = "editor" | "preview";
 

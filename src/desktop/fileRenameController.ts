@@ -1,9 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
 import { message } from "@tauri-apps/plugin-dialog";
-import { getRenameValidationError } from "./fileRename";
-import { t } from "./i18n";
-import { replaceRecentFile } from "./recentFiles";
-import { getState, setState } from "./state";
+import { getRenameValidationError } from "../shared/utils/fileRename";
+import { t } from "../shared/i18n/i18n";
+import { replaceRecentFile } from "../shared/utils/recentFiles";
+import { getState, setState } from "../shared/state/state";
 
 function getBaseName(path: string): string {
   return path.slice(Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/")) + 1);

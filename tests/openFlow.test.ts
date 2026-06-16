@@ -6,7 +6,7 @@ import {
   getOpenDecision,
   getOpenTarget,
   parseOpenFilePath,
-} from "../src/openFlow.ts";
+} from "../src/shared/utils/openFlow.ts";
 
 test("将弹窗结果映射为打开决策", () => {
   const labels = { save: "Save and Open", discard: "Open Without Saving" };

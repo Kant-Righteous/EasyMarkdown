@@ -4,7 +4,7 @@ import {
   DEFAULT_SPLIT_RATIO,
   clampSplitRatio,
   getSplitRatioFromPointer,
-} from "../src/splitPane.ts";
+} from "../src/desktop/splitPane.ts";
 
 test("split ratio defaults to half and stays between twenty and eighty percent", () => {
   assert.equal(DEFAULT_SPLIT_RATIO, 50);

@@ -4,7 +4,7 @@ import {
   PROTECTED_FORMAT_COMMANDS,
   TOOLBAR_OVERFLOW_ORDER,
   canOverflowCommand,
-} from "../src/toolbarOverflow.ts";
+} from "../src/desktop/toolbarOverflow.ts";
 
 test("工具栏按确认顺序收纳低优先级命令", () => {
   assert.deepEqual(TOOLBAR_OVERFLOW_ORDER, [

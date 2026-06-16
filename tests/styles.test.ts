@@ -3,11 +3,11 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const styles = await readFile(
-  new URL("../src/style.css", import.meta.url),
+  new URL("../src/desktop/style.css", import.meta.url),
   "utf8",
 );
 const printStyles = await readFile(
-  new URL("../src/print.css", import.meta.url),
+  new URL("../src/desktop/print.css", import.meta.url),
   "utf8",
 );
 

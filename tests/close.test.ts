@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { getCloseAction, getCloseDecision } from "../src/close.ts";
+import { getCloseAction, getCloseDecision } from "../src/shared/utils/close.ts";
 
 test("已保存内容允许系统默认关闭", () => {
   assert.equal(getCloseAction(false), "default");

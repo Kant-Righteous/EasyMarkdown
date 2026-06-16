@@ -1,7 +1,7 @@
-import { bold, italic, link } from "./commands";
-import { redo, undo } from "./editor";
+import { bold, italic, link } from "../shared/commands";
+import { redo, undo } from "../shared/editor";
 import { saveFile } from "./file";
-import { getShortcutAction } from "./shortcutAction";
+import { getShortcutAction } from "../shared/utils/shortcutAction";
 
 let shortcutsBound = false;
 

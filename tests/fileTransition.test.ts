@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { confirmUnsavedTransition } from "../src/fileTransition.ts";
+import { confirmUnsavedTransition } from "../src/shared/utils/fileTransition.ts";
 
 test("clean content continues without prompting", async () => {
   let prompted = false;

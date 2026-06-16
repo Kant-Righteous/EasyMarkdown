@@ -8,7 +8,7 @@ import {
   setLanguage,
   t,
   type LanguageStorage,
-} from "../src/i18n.ts";
+} from "../src/shared/i18n/i18n.ts";
 
 function storage(initial: string | null = null): LanguageStorage {
   let value = initial;

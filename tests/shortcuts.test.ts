@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { getShortcutAction } from "../src/shortcutAction.ts";
+import { getShortcutAction } from "../src/shared/utils/shortcutAction.ts";
 
 const ctrlEvent = (key: string) => ({
   key,

@@ -1,6 +1,6 @@
 import printStyles from "./print.css?raw";
-import { getLanguage, t } from "./i18n";
-import { buildPrintDocument } from "./printDocument";
+import { getLanguage, t } from "../shared/i18n/i18n";
+import { buildPrintDocument } from "../shared/markdown/printDocument";
 
 export function buildPrintHtml(options: {
   title: string;

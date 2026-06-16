@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildPrintDocument } from "../src/printDocument.ts";
+import { buildPrintDocument } from "../src/shared/markdown/printDocument.ts";
 
 const printStyles = `
 @page { size: A4; }

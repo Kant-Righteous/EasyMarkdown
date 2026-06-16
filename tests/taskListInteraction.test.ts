@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { toggleTaskAtSourceLine } from "../src/taskListInteraction.ts";
+import { toggleTaskAtSourceLine } from "../src/shared/markdown/taskListInteraction.ts";
 
 test("checks the task at the requested source line", () => {
   const markdown = "- [ ] 第一项\n- [ ] 第二项";

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   getVisibleOutlineItems,
   parseOutline,
-} from "../src/outline.ts";
+} from "../src/shared/markdown/outline.ts";
 
 test("parses ATX headings from H1 through H4", () => {
   const items = parseOutline(`

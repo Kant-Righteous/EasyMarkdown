@@ -7,18 +7,18 @@ import {
   onEditorInput,
   setContent,
   setContentPreservingView,
-} from "./editor";
-import { renderMarkdown } from "./markdown";
-import { renderMermaidDiagrams } from "./mermaid";
+} from "../shared/editor";
+import { renderMarkdown } from "../shared/markdown/markdown";
+import { renderMermaidDiagrams } from "../shared/markdown/mermaid";
 import { bindShortcuts } from "./shortcuts";
-import { getState, setState, subscribe, updateDirtyState } from "./state";
+import { getState, setState, subscribe, updateDirtyState } from "../shared/state/state";
 import { bindToolbar } from "./toolbar";
 import { bindAiMode } from "./ai-mode";
 import { openPathInCurrentWindow, saveFile } from "./file";
-import { parseOpenFilePath } from "./openFlow";
+import { parseOpenFilePath } from "../shared/utils/openFlow";
 import { applyViewMode } from "./view";
-import { getCloseAction, getCloseDecision } from "./close";
-import { initI18n, subscribeLanguage, t } from "./i18n";
+import { getCloseAction, getCloseDecision } from "../shared/utils/close";
+import { initI18n, subscribeLanguage, t } from "../shared/i18n/i18n";
 import { bindPreviewLinks } from "./previewLinks";
 import { bindSplitScrollSync } from "./scrollSync";
 import { runPdfExportWindow } from "./exportPdf";
@@ -27,11 +27,11 @@ import { bindSidebar } from "./sidebar";
 import { bindSplitPane } from "./splitPane";
 import { bindFileDrop } from "./fileDrop";
 import { bindContextMenu } from "./contextMenu";
-import { bindTaskListInteraction } from "./taskListInteraction";
+import { bindTaskListInteraction } from "../shared/markdown/taskListInteraction";
 import {
   bindPreviewBlockCopy,
   decoratePreviewCopyBlocks,
-} from "./previewBlockCopy";
+} from "../shared/markdown/previewBlockCopy";
 
 let previewTimer: number | undefined;
 let syncPreviewScroll = (): void => {};

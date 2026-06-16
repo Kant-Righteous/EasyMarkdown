@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { renderMarkdown } from "../src/markdown.ts";
-import { getBrowserUrl } from "../src/externalUrl.ts";
+import { renderMarkdown } from "../src/shared/markdown/markdown.ts";
+import { getBrowserUrl } from "../src/shared/utils/externalUrl.ts";
 
 test("Markdown 链接标记为由系统浏览器处理", () => {
   const html = renderMarkdown("[EasyMarkdown](https://example.com/docs)");

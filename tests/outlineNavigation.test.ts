@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   getOutlineNavigationSurface,
   getPreviewHeadingSelector,
-} from "../src/outlineNavigation.ts";
+} from "../src/shared/markdown/outlineNavigation.ts";
 
 test("preview and split modes navigate using the preview surface", () => {
   assert.equal(getOutlineNavigationSurface("preview"), "preview");

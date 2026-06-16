@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   buildRenamedPath,
   getRenameValidationError,
-} from "../src/fileRename.ts";
+} from "../src/shared/utils/fileRename.ts";
 
 test("rename keeps the file in its original directory", () => {
   assert.equal(

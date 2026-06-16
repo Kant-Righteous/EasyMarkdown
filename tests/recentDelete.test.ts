@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { getRecentDeleteDecision } from "../src/recentDelete.ts";
+import { getRecentDeleteDecision } from "../src/shared/utils/recentDelete.ts";
 
 const labels = {
   record: "Remove from Recent",

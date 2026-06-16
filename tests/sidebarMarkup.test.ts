@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+const html = await readFile(new URL("../src/desktop/index.html", import.meta.url), "utf8");
 
 test("sidebar toggle appears before the heading formatting group", () => {
   const toggleIndex = html.indexOf('id="sidebar-toggle"');

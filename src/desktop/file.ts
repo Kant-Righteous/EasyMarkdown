@@ -2,23 +2,23 @@ import { invoke } from "@tauri-apps/api/core";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { message, open, save } from "@tauri-apps/plugin-dialog";
-import { getContent, setContent } from "./editor";
+import { getContent, setContent } from "../shared/editor";
 import {
   buildOpenFileUrl,
   createRecentWindowLabel,
   getOpenDecision,
   getOpenTarget,
-} from "./openFlow";
-import { addRecentFile, removeRecentFile } from "./recentFiles";
+} from "../shared/utils/openFlow";
+import { addRecentFile, removeRecentFile } from "../shared/utils/recentFiles";
 import {
   createSaveQueue,
   getSaveAsDefaultPath,
   performSave,
   type WriteConfirmation,
-} from "./saveFlow";
-import { confirmUnsavedTransition } from "./fileTransition";
-import { getState, setState, updateDirtyState } from "./state";
-import { t } from "./i18n";
+} from "../shared/utils/saveFlow";
+import { confirmUnsavedTransition } from "../shared/utils/fileTransition";
+import { getState, setState, updateDirtyState } from "../shared/state/state";
+import { t } from "../shared/i18n/i18n";
 
 const markdownFilters = [
   {

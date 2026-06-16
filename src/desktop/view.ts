@@ -1,4 +1,4 @@
-import { setState, type ViewMode } from "./state";
+import { setState, type ViewMode } from "../shared/state/state";
 
 export function applyViewMode(mode: ViewMode): void {
   const workspace = document.querySelector<HTMLElement>("#workspace");

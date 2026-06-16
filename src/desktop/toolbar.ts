@@ -19,7 +19,7 @@ import {
   taskList,
   underline,
   unorderedList,
-} from "./commands";
+} from "../shared/commands";
 import { exportPdf } from "./exportPdf";
 import {
   newFile,
@@ -29,22 +29,22 @@ import {
   saveAsFile,
   saveFile,
 } from "./file";
-import { redo, undo } from "./editor";
+import { redo, undo } from "../shared/editor";
 import { renameFile } from "./fileRenameController";
 import {
   bindRecentFilesStorageSync,
   clearRecentFiles,
   loadRecentFiles,
   subscribeRecentFiles,
-} from "./recentFiles";
+} from "../shared/utils/recentFiles";
 import { setViewMode } from "./view";
 import {
   normalizeLanguage,
   setLanguage,
   subscribeLanguage,
   t,
-} from "./i18n";
-import { getState, subscribe } from "./state";
+} from "../shared/i18n/i18n";
+import { getState, subscribe } from "../shared/state/state";
 import { TOOLBAR_OVERFLOW_ORDER } from "./toolbarOverflow";
 
 const actions: Record<string, () => void | Promise<unknown>> = {

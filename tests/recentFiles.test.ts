@@ -7,7 +7,7 @@ import {
   removeRecentFile,
   replaceRecentFile,
   type StorageLike,
-} from "../src/recentFiles.ts";
+} from "../src/shared/utils/recentFiles.ts";
 
 function storage(initial: string | null = null): StorageLike {
   let value = initial;

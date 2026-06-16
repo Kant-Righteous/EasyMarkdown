@@ -2,11 +2,11 @@ import { invoke } from "@tauri-apps/api/core";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { save } from "@tauri-apps/plugin-dialog";
-import { getContent } from "./editor";
-import { renderMarkdownWithMermaid } from "./markdown";
+import { getContent } from "../shared/editor";
+import { renderMarkdownWithMermaid } from "../shared/markdown/markdown";
 import { buildPrintHtml } from "./printTemplate";
-import { getState } from "./state";
-import { t } from "./i18n";
+import { getState } from "../shared/state/state";
+import { t } from "../shared/i18n/i18n";
 
 const PRINT_JOB_PREFIX = "easymarkdown.print-job.";
 const PRINT_JOB_PARAM = "printJob";

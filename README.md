@@ -35,23 +35,60 @@ Tauri 2、Rust、TypeScript、Vite 和 Markdown-it。
 
 ```powershell
 npm install
-npm run dev
-npm run tauri dev
+npm run dev:desktop
+npm run desktop:dev
 ```
 
-前端构建：
+桌面前端构建：
 
 ```powershell
+npm run build:desktop
+```
+
+移动端前端开发和构建：
+
+```powershell
+npm run dev:mobile
+npm run build:mobile
+```
+
+桌面端和移动端使用独立前端入口：
+
+- 桌面端入口：`src/desktop/index.html`
+- 移动端入口：`src/mobile/index.html`
+- 共享 Markdown、状态、命令、国际化和通用工具位于 `src/shared`
+- 桌面构建输出到 `dist-desktop`
+- 移动构建输出到 `dist-mobile`
+
+旧的快捷命令仍保留：
+
+```powershell
+npm run dev
 npm run build
 ```
 
 ## Windows 打包
 
 ```powershell
+npm run desktop:build
+```
+
+等价于：
+
+```powershell
 npm run tauri build
 ```
 
-Windows 构建生成 NSIS `.exe` 安装包，安装界面支持简体中文、法语和英语。
+Windows 构建使用 `src-tauri/tauri.windows.conf.json` 和 `dist-desktop`，生成 NSIS `.exe` 安装包，安装界面支持简体中文、法语和英语。
+
+## Android 开发与打包
+
+```powershell
+npm run android:dev
+npm run android:build
+```
+
+Android 平台配置使用 `src-tauri/tauri.android.conf.json` 和 `dist-mobile`。`scripts/android-dev.ps1` 会设置本机 Java、Android SDK 和 NDK 环境变量后调用 `npm run tauri android dev`。
 
 ## 许可证
 

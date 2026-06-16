@@ -3,9 +3,9 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const [mainSource, editorSource, interactionSource] = await Promise.all([
-  readFile(new URL("../src/main.ts", import.meta.url), "utf8"),
-  readFile(new URL("../src/editor.ts", import.meta.url), "utf8"),
-  readFile(new URL("../src/taskListInteraction.ts", import.meta.url), "utf8"),
+  readFile(new URL("../src/desktop/main.ts", import.meta.url), "utf8"),
+  readFile(new URL("../src/shared/editor.ts", import.meta.url), "utf8"),
+  readFile(new URL("../src/shared/markdown/taskListInteraction.ts", import.meta.url), "utf8"),
 ]);
 
 test("application binds preview task-list interaction", () => {
