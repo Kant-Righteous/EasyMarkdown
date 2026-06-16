@@ -4,6 +4,7 @@
   "version": "1.1.1",
   "type": "module",
   "scripts": {
+    "android:dev": "powershell -ExecutionPolicy Bypass -File ./scripts/android-dev.ps1",
     "dev": "vite",
     "build": "tsc && vite build",
     "test": "node --test --experimental-strip-types",
