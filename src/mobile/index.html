@@ -8,17 +8,46 @@
   </head>
   <body>
     <main class="mobile-app" data-platform="mobile">
-      <header class="mobile-topbar">
-        <div>
-          <strong id="mobile-file-name">未命名.md</strong>
-          <span id="mobile-save-state">已保存</span>
+      <header class="mobile-top">
+        <div class="mobile-doc-row">
+          <strong class="mobile-file-name" id="mobile-file-name">未命名.md</strong>
+          <span class="mobile-save-state" id="mobile-save-state">已保存</span>
         </div>
-        <div class="mobile-view-switcher" role="group" aria-label="视图模式">
-          <button type="button" data-view="preview">预览</button>
-          <button type="button" data-view="split">分屏</button>
-          <button type="button" data-view="edit">编辑</button>
+        <div class="mobile-action-row" role="toolbar" aria-label="文件与常用操作">
+          <button
+            type="button"
+            class="mobile-icon-button"
+            data-mobile-drawer-open
+            aria-label="打开侧栏"
+            title="打开侧栏"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 4h18v16H3V4Zm2 2v12h4V6H5Zm6 0v12h8V6h-8Z"></path>
+            </svg>
+          </button>
+          <button type="button" data-mobile-menu-trigger="file" aria-expanded="false">文件</button>
+          <button type="button" class="mobile-ai-button">AI 对话保存模式</button>
+          <button type="button" class="mobile-icon-button" data-command="undo" aria-label="撤销" title="撤销">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 7 5 11l4 4"></path>
+              <path d="M5 11h8a6 6 0 0 1 6 6"></path>
+            </svg>
+          </button>
+          <button type="button" class="mobile-icon-button" data-command="redo" aria-label="重做" title="重做">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m15 7 4 4-4 4"></path>
+              <path d="M19 11h-8a6 6 0 0 0-6 6"></path>
+            </svg>
+          </button>
+          <button type="button" class="mobile-primary" data-command="save">保存</button>
         </div>
       </header>
+
+      <nav class="mobile-tabs" aria-label="视图模式">
+        <button type="button" data-view="preview">预览</button>
+        <button type="button" data-view="split">分屏</button>
+        <button type="button" data-view="edit">编辑</button>
+      </nav>
 
       <section class="mobile-workspace view-split" id="workspace">
         <div class="editor-pane">
@@ -29,16 +58,115 @@
             placeholder="在这里输入 Markdown..."
           ></textarea>
         </div>
-        <article id="preview" class="preview-pane" aria-label="Markdown 预览区"></article>
+        <div class="mobile-split-divider" aria-hidden="true"></div>
+        <div class="preview-pane">
+          <article id="preview" aria-label="Markdown 预览区"></article>
+        </div>
       </section>
 
-      <footer class="mobile-toolbar" aria-label="Markdown 格式工具栏">
-        <button type="button" data-command="h1">H1</button>
-        <button type="button" data-command="bold">加粗</button>
-        <button type="button" data-command="unordered-list">列表</button>
-        <button type="button" data-command="blockquote">引用</button>
-        <button type="button" data-command="link">链接</button>
+      <footer class="mobile-tools" aria-label="Markdown 格式工具栏">
+        <button type="button" class="mobile-tools-collapse" data-mobile-hide-tools aria-label="隐藏工具栏">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+        </button>
+        <button type="button" data-mobile-menu-trigger="heading" aria-expanded="false">标题</button>
+        <button type="button" data-mobile-menu-trigger="font" aria-expanded="false">字体</button>
+        <button type="button" data-mobile-menu-trigger="list" aria-expanded="false">列表</button>
+        <button type="button" data-mobile-menu-trigger="block" aria-expanded="false">块级</button>
+        <button type="button" data-mobile-menu-trigger="insert" aria-expanded="false">插入</button>
       </footer>
+      <button type="button" class="mobile-show-tools" data-mobile-show-tools aria-label="显示工具栏">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"></path></svg>
+      </button>
+
+      <section class="mobile-menu mobile-file-menu" data-mobile-menu="file" hidden>
+        <div class="mobile-menu-title">文件</div>
+        <button type="button" data-command="new">新建</button>
+        <button type="button" data-command="open">打开</button>
+        <button type="button" data-command="save-as">另存为</button>
+        <button type="button" data-command="rename">重命名</button>
+        <button type="button" data-command="export-pdf">导出 PDF</button>
+      </section>
+
+      <section class="mobile-menu mobile-bottom-menu" data-mobile-menu="heading" hidden>
+        <div class="mobile-menu-title">标题级别</div>
+        <button type="button" data-command="h1">H1 一级标题</button>
+        <button type="button" data-command="h2">H2 二级标题</button>
+        <button type="button" data-command="h3">H3 三级标题</button>
+        <button type="button" data-command="h4">H4 四级标题</button>
+      </section>
+      <section class="mobile-menu mobile-bottom-menu" data-mobile-menu="font" hidden>
+        <div class="mobile-menu-title">文字格式</div>
+        <button type="button" data-command="bold">加粗</button>
+        <button type="button" data-command="italic">斜体</button>
+        <button type="button" data-command="underline">下划线</button>
+        <button type="button" data-command="strikethrough">删除线</button>
+        <button type="button" data-command="highlight">高亮</button>
+      </section>
+      <section class="mobile-menu mobile-bottom-menu" data-mobile-menu="list" hidden>
+        <div class="mobile-menu-title">列表</div>
+        <button type="button" data-command="unordered-list">无序列表</button>
+        <button type="button" data-command="ordered-list">有序列表</button>
+        <button type="button" data-command="task-list">任务列表</button>
+      </section>
+      <section class="mobile-menu mobile-bottom-menu" data-mobile-menu="block" hidden>
+        <div class="mobile-menu-title">块级格式</div>
+        <button type="button" data-command="blockquote">引用</button>
+        <button type="button" data-command="code-block">代码块</button>
+        <button type="button" data-command="formula-block">公式块</button>
+        <button type="button" data-command="chart">Mermaid 图表</button>
+      </section>
+      <section class="mobile-menu mobile-bottom-menu" data-mobile-menu="insert" hidden>
+        <div class="mobile-menu-title">插入</div>
+        <button type="button" data-command="link">超链接</button>
+        <button type="button" data-command="image">图片</button>
+        <button type="button" data-command="table">表格</button>
+        <button type="button" data-command="horizontal-rule">水平分割线</button>
+        <button type="button" data-command="inline-code">内联代码</button>
+        <button type="button" data-command="inline-formula">内联公式</button>
+        <button type="button" data-command="footnote">脚注</button>
+      </section>
+
+      <div class="mobile-drawer-backdrop" data-mobile-drawer hidden>
+        <aside class="mobile-drawer" aria-label="文档导航">
+          <div class="mobile-drawer-head">
+            <strong>文档导航</strong>
+            <button type="button" data-mobile-drawer-close>关闭</button>
+          </div>
+          <div class="mobile-drawer-tabs" role="tablist" aria-label="文档导航">
+            <button type="button" class="active" data-mobile-drawer-tab="files">文件</button>
+            <button type="button" data-mobile-drawer-tab="outline">大纲</button>
+          </div>
+          <section class="mobile-drawer-panel" data-mobile-drawer-panel="files">
+            <div class="mobile-drawer-item">产品说明.md</div>
+            <div class="mobile-drawer-item">开发计划.md</div>
+            <div class="mobile-drawer-item">README.md</div>
+          </section>
+          <section class="mobile-drawer-panel" data-mobile-drawer-panel="outline" hidden>
+            <div class="mobile-outline-tree">
+              <div class="mobile-drawer-item mobile-outline-parent">
+                <button
+                  type="button"
+                  class="mobile-outline-toggle"
+                  data-mobile-outline-toggle="product"
+                  aria-expanded="true"
+                  aria-label="折叠产品说明"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5"></path></svg>
+                </button>
+                <span class="mobile-outline-label">产品说明</span>
+              </div>
+              <div class="mobile-outline-children" data-mobile-outline-children="product">
+                <div class="mobile-drawer-item mobile-outline-child">主要功能</div>
+                <div class="mobile-drawer-item mobile-outline-child">任务清单</div>
+              </div>
+              <div class="mobile-drawer-item mobile-outline-parent">
+                <span aria-hidden="true"></span>
+                <span class="mobile-outline-label">附录</span>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </div>
     </main>
   </body>
 </html>

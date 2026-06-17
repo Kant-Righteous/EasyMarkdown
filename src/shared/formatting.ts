@@ -32,7 +32,7 @@ export function taskListText(
 
 export function headingText(
   value: string,
-  level: 1 | 2 | 3,
+  level: 1 | 2 | 3 | 4,
   placeholder: string,
 ): string {
   const prefix = `${"#".repeat(level)} `;

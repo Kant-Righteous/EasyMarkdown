@@ -102,6 +102,129 @@ fn write_file(path: String, content: String) -> Result<WriteFileResult, String> 
     })
 }
 
+fn escape_pdf_text(text: &str) -> String {
+    text.chars()
+        .map(|character| match character {
+            '\\' => "\\\\".to_string(),
+            '(' => "\\(".to_string(),
+            ')' => "\\)".to_string(),
+            '\t' => "    ".to_string(),
+            character if character.is_control() => " ".to_string(),
+            character => character.to_string(),
+        })
+        .collect::<String>()
+}
+
+fn wrap_pdf_line(line: &str, max_chars: usize) -> Vec<String> {
+    let mut wrapped = Vec::new();
+    let mut current = String::new();
+    for character in line.chars() {
+        current.push(character);
+        if current.chars().count() >= max_chars {
+            wrapped.push(current);
+            current = String::new();
+        }
+    }
+    if !current.is_empty() || wrapped.is_empty() {
+        wrapped.push(current);
+    }
+    wrapped
+}
+
+fn build_plain_text_pdf(title: &str, content: &str) -> Vec<u8> {
+    const LINES_PER_PAGE: usize = 42;
+    const MAX_LINE_CHARS: usize = 78;
+
+    let mut lines = vec![title.trim().to_string(), String::new()];
+    for line in content.lines() {
+        lines.extend(wrap_pdf_line(line, MAX_LINE_CHARS));
+    }
+    if lines.len() <= 2 {
+        lines.push(String::new());
+    }
+
+    let pages = lines
+        .chunks(LINES_PER_PAGE)
+        .map(|chunk| chunk.to_vec())
+        .collect::<Vec<_>>();
+    let font_object_id = 3 + pages.len() * 2;
+    let mut objects: Vec<Vec<u8>> = Vec::new();
+    let kids = (0..pages.len())
+        .map(|index| format!("{} 0 R", 3 + index * 2))
+        .collect::<Vec<_>>()
+        .join(" ");
+
+    objects.push(b"<< /Type /Catalog /Pages 2 0 R >>".to_vec());
+    objects.push(
+        format!("<< /Type /Pages /Kids [{kids}] /Count {} >>", pages.len()).into_bytes(),
+    );
+
+    for (index, page_lines) in pages.iter().enumerate() {
+        let page_object_id = 3 + index * 2;
+        let content_object_id = page_object_id + 1;
+        objects.push(
+            format!(
+                "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 {font_object_id} 0 R >> >> /Contents {content_object_id} 0 R >>"
+            )
+            .into_bytes(),
+        );
+
+        let mut stream = String::from("BT\n/F1 11 Tf\n50 800 Td\n");
+        for (line_index, line) in page_lines.iter().enumerate() {
+            if line_index > 0 {
+                stream.push_str("0 -17 Td\n");
+            }
+            stream.push_str(&format!("({}) Tj\n", escape_pdf_text(line)));
+        }
+        stream.push_str("ET\n");
+        objects.push(
+            format!(
+                "<< /Length {} >>\nstream\n{}endstream",
+                stream.as_bytes().len(),
+                stream
+            )
+            .into_bytes(),
+        );
+    }
+
+    objects.push(b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>".to_vec());
+
+    let mut pdf = b"%PDF-1.4\n%\xE2\xE3\xCF\xD3\n".to_vec();
+    let mut offsets = vec![0usize];
+    for (index, object) in objects.iter().enumerate() {
+        offsets.push(pdf.len());
+        pdf.extend_from_slice(format!("{} 0 obj\n", index + 1).as_bytes());
+        pdf.extend_from_slice(object);
+        pdf.extend_from_slice(b"\nendobj\n");
+    }
+    let xref_offset = pdf.len();
+    pdf.extend_from_slice(format!("xref\n0 {}\n", objects.len() + 1).as_bytes());
+    pdf.extend_from_slice(b"0000000000 65535 f \n");
+    for offset in offsets.iter().skip(1) {
+        pdf.extend_from_slice(format!("{offset:010} 00000 n \n").as_bytes());
+    }
+    pdf.extend_from_slice(
+        format!(
+            "trailer\n<< /Size {} /Root 1 0 R >>\nstartxref\n{}\n%%EOF\n",
+            objects.len() + 1,
+            xref_offset
+        )
+        .as_bytes(),
+    );
+    pdf
+}
+
+#[tauri::command]
+fn export_markdown_pdf(path: String, title: String, content: String) -> Result<(), String> {
+    let title = if title.trim().is_empty() {
+        "EasyMarkdown"
+    } else {
+        title.trim()
+    };
+    let pdf = build_plain_text_pdf(title, &content);
+    std::fs::write(path, pdf).map_err(|error| error.to_string())
+}
+
 #[tauri::command]
 fn open_devtools(webview: tauri::WebviewWindow) {
     webview.open_devtools();
@@ -276,6 +399,7 @@ pub fn run() {
             rename_file,
             delete_file,
             write_file,
+            export_markdown_pdf,
             take_installer_language,
             print_to_pdf,
             open_devtools,
@@ -287,7 +411,7 @@ pub fn run() {
 
 #[cfg(test)]
 mod tests {
-    use super::{delete_file, write_file};
+    use super::{delete_file, export_markdown_pdf, write_file};
 
     #[test]
     fn write_file_overwrites_existing_content() {
@@ -337,5 +461,23 @@ mod tests {
 
         assert!(error.contains("regular file"));
         assert!(path.is_dir());
+    }
+
+    #[test]
+    fn export_markdown_pdf_writes_pdf_header() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("target")
+            .join("export-markdown-test.pdf");
+
+        export_markdown_pdf(
+            path.to_string_lossy().into_owned(),
+            "Test.md".to_string(),
+            "# Title\n\nBody".to_string(),
+        )
+        .expect("export pdf");
+
+        let bytes = std::fs::read(&path).expect("read exported pdf");
+        assert!(bytes.starts_with(b"%PDF-1.4"));
+        assert!(bytes.ends_with(b"%%EOF\n"));
     }
 }

@@ -35,7 +35,7 @@ function insertBlock(content: string): void {
   insertAtCursor(`${leadingNewline}${content}\n`);
 }
 
-export function heading(level: 1 | 2 | 3): void {
+export function heading(level: 1 | 2 | 3 | 4): void {
   const selection = getSelection();
   replaceSelection(headingText(selection.text, level, t("command.heading")));
 }
