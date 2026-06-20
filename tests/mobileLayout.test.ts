@@ -34,11 +34,9 @@ test("mobile file menu, drawer, outline tree and toolbar controls exist", () => 
   assert.match(html, /文档导航/);
   assert.match(html, /data-mobile-drawer-tab="files"/);
   assert.match(html, /data-mobile-drawer-tab="outline"/);
-  assert.match(html, /mobile-outline-parent/);
-  assert.match(html, /class="mobile-outline-toggle"/);
-  assert.match(html, /aria-expanded="true"/);
-  assert.match(html, /class="mobile-outline-children"/);
-  assert.match(html, /mobile-outline-child/);
+  assert.match(html, /id="mobile-recent-files"/);
+  assert.match(html, /id="mobile-outline"/);
+  assert.doesNotMatch(html, /产品说明\.md|开发计划\.md|主要功能|任务清单|附录/);
   assert.match(html, /data-mobile-hide-tools/);
   assert.match(html, /data-mobile-show-tools/);
 });
@@ -90,10 +88,26 @@ test("mobile script binds V4 interactions without importing desktop code", () =>
   assert.match(source, /data-mobile-menu-trigger/);
   assert.match(source, /data-mobile-drawer-open/);
   assert.match(source, /data-mobile-hide-tools/);
-  assert.match(source, /data-mobile-outline-toggle/);
+  assert.match(source, /bindMobileSidebar/);
+  assert.match(source, /bindMobileAiMode/);
+  assert.match(source, /bindPreviewLinks/);
+  assert.match(source, /bindSplitScrollSync/);
   assert.match(source, /bindTaskListInteraction/);
   assert.match(source, /decoratePreviewCopyBlocks/);
+  assert.match(source, /addRecentFile/);
+  assert.match(source, /replaceRecentFile/);
   assert.doesNotMatch(source, /\.\.\/desktop|\/desktop\//);
+});
+
+test("mobile AI and sidebar markup are dynamic containers", () => {
+  assert.match(html, /id="ai-mode-toggle"/);
+  assert.match(html, /id="ai-bar"/);
+  assert.match(html, /data-command="ai-prompt"/);
+  assert.match(html, /data-command="ai-response"/);
+  assert.match(html, /id="mobile-recent-files"/);
+  assert.match(html, /id="mobile-outline"/);
+  assert.doesNotMatch(html, /class="mobile-drawer-item">[^<]+\.md<\/div>/);
+  assert.doesNotMatch(html, /class="mobile-drawer-item mobile-outline-child">/);
 });
 
 test("mobile styles include drawer, bottom menus, split divider and safe area", () => {
@@ -106,4 +120,21 @@ test("mobile styles include drawer, bottom menus, split divider and safe area", 
   assert.match(styles, /\.mobile-app\.tools-hidden \.mobile-tools\s*\{/);
   assert.match(styles, /\.mobile-ai-button\s*\{[^}]*max-width:\s*190px/s);
   assert.match(styles, /\.mobile-primary\s*\{[^}]*flex:\s*0 0 52px/s);
+});
+
+test("mobile preview constrains rich Markdown and MDX content", () => {
+  assert.match(styles, /#preview\s*\{[^}]*width:\s*min\(100%, 72ch\)/s);
+  assert.match(styles, /#preview\s*\{[^}]*overflow-wrap:\s*anywhere/s);
+  assert.match(styles, /#preview h1\s*\{[^}]*font-size:\s*28px/s);
+  assert.match(styles, /#preview a\s*\{[^}]*word-break:\s*break-word/s);
+  assert.match(styles, /#preview img,\s*#preview svg,\s*#preview canvas,\s*#preview video,\s*#preview iframe\s*\{[^}]*max-width:\s*100%/s);
+  assert.match(styles, /#preview table\s*\{[^}]*overflow-x:\s*auto/s);
+  assert.match(styles, /#preview \.mdx-icon\s*\{/);
+  assert.match(styles, /#preview \.mdx-icon svg\s*\{[^}]*width:\s*100%/s);
+  assert.match(styles, /#preview \.mdx-card-group\s*\{[^}]*grid-template-columns:\s*1fr/s);
+  assert.match(styles, /#preview \.mdx-card\s*\{/);
+  assert.match(styles, /#preview \.mdx-tabs-expanded\s*\{/);
+  assert.match(styles, /#preview \.mdx-tab-section\s*\{/);
+  assert.match(styles, /#preview \.mdx-html\s*\{/);
+  assert.match(styles, /#preview video\.mdx-media,\s*#preview img\.mdx-media\s*\{/);
 });

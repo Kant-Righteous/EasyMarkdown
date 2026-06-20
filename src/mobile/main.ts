@@ -25,6 +25,7 @@ import {
 } from "../shared/commands";
 import {
   getContent,
+  insertAtCursor,
   onEditorInput,
   redo,
   setContent,
@@ -49,11 +50,19 @@ import {
 import { confirmUnsavedTransition } from "../shared/utils/fileTransition";
 import { getRenameValidationError } from "../shared/utils/fileRename";
 import {
+  addRecentFile,
+  removeRecentFile,
+  replaceRecentFile,
+} from "../shared/utils/recentFiles";
+import {
   createSaveQueue,
   getSaveAsDefaultPath,
   performSave,
   type WriteConfirmation,
 } from "../shared/utils/saveFlow";
+import { bindPreviewLinks } from "./previewLinks";
+import { bindMobileSidebar } from "./sidebar";
+import { bindSplitScrollSync } from "./scrollSync";
 
 const markdownFilters = [
   {
@@ -143,7 +152,25 @@ async function loadFile(path: string): Promise<void> {
     isDirty: false,
     lastSavedContent: content,
   });
+  addRecentFile(path);
   updatePreview();
+}
+
+async function openPathInCurrentWindow(
+  path: string,
+  options: { confirmUnsaved?: boolean; removeOnFailure?: boolean } = {},
+): Promise<boolean> {
+  const { confirmUnsaved = true, removeOnFailure = false } = options;
+  if (confirmUnsaved && !(await prepareForFileTransition())) return false;
+
+  try {
+    await loadFile(path);
+    return true;
+  } catch (error) {
+    if (removeOnFailure) removeRecentFile(path);
+    await showError(t("file.openAction"), error);
+    return false;
+  }
 }
 
 async function newFile(): Promise<void> {
@@ -169,7 +196,7 @@ async function openFile(): Promise<void> {
       filters: markdownFilters,
     });
     if (!path) return;
-    await loadFile(path);
+    await openPathInCurrentWindow(path, { confirmUnsaved: false });
   } catch (error) {
     await showError(t("file.openAction"), error);
   }
@@ -205,6 +232,7 @@ async function runSave(forceSaveAs: boolean): Promise<boolean> {
     isDirty: false,
     lastSavedContent: outcome.content,
   });
+  addRecentFile(outcome.path);
   return true;
 }
 
@@ -238,6 +266,7 @@ async function renameCurrentFile(): Promise<void> {
       path,
       newName: newName.trim(),
     });
+    replaceRecentFile(path, newPath);
     setState({
       currentFilePath: newPath,
       currentFileName: fileNameFromPath(newPath),
@@ -300,6 +329,37 @@ const actions: Record<string, () => void | Promise<void>> = {
 };
 
 let previewTimer: number | undefined;
+let syncPreviewScroll = (): void => {};
+let refreshMobileOutline = (): void => {};
+
+let mobileAiModeBound = false;
+
+function bindMobileAiMode(): void {
+  if (mobileAiModeBound) return;
+  mobileAiModeBound = true;
+
+  const toggle = document.querySelector<HTMLButtonElement>("#ai-mode-toggle");
+  const aiBar = document.querySelector<HTMLElement>("#ai-bar");
+  if (!toggle || !aiBar) return;
+
+  toggle.addEventListener("click", () => {
+    const expanded = toggle.getAttribute("aria-expanded") === "true";
+    toggle.setAttribute("aria-expanded", String(!expanded));
+    aiBar.hidden = expanded;
+  });
+
+  aiBar.addEventListener("click", (event) => {
+    const button = (event.target as Element).closest<HTMLButtonElement>(
+      "[data-command]",
+    );
+    const command = button?.dataset.command;
+    if (command === "ai-prompt") {
+      insertAtCursor(`## ${t("ai.prompt")}\n\n`);
+    } else if (command === "ai-response") {
+      insertAtCursor(`## ${t("ai.response")}\n\n`);
+    }
+  });
+}
 
 function closeMobileMenus(): void {
   document.querySelectorAll<HTMLElement>("[data-mobile-menu]").forEach((menu) => {
@@ -326,8 +386,11 @@ function updatePreview(): void {
   if (!preview) return;
   preview.innerHTML = renderMarkdown(getContent());
   decoratePreviewCopyBlocks(preview);
+  syncPreviewScroll();
+  refreshMobileOutline();
   void renderMermaidDiagrams(preview).then(() => {
     decoratePreviewCopyBlocks(preview);
+    syncPreviewScroll();
   });
 }
 
@@ -374,29 +437,27 @@ function setDrawerTab(tab: "files" | "outline"): void {
     });
 }
 
-function toggleOutlineGroup(button: HTMLButtonElement): void {
-  const group = button.dataset.mobileOutlineToggle;
-  if (!group) return;
-  const children = document.querySelector<HTMLElement>(
-    `[data-mobile-outline-children="${group}"]`,
-  );
-  const expanded = button.getAttribute("aria-expanded") === "true";
-  button.setAttribute("aria-expanded", String(!expanded));
-  button.setAttribute("aria-label", expanded ? "展开产品说明" : "折叠产品说明");
-  if (children) children.hidden = expanded;
-}
-
 window.addEventListener("DOMContentLoaded", () => {
   initI18n("zh-CN");
   if (!getState().currentFilePath) {
     setState({ currentFileName: t("file.untitled") });
   }
 
+  bindMobileAiMode();
+  bindPreviewLinks();
+
   const preview = document.querySelector<HTMLElement>("#preview");
   if (preview) {
     bindTaskListInteraction(preview, getContent, setContentPreservingView);
     bindPreviewBlockCopy(preview);
   }
+
+  refreshMobileOutline = bindMobileSidebar({
+    openPath: (path) =>
+      openPathInCurrentWindow(path, { removeOnFailure: true }),
+    closeDrawer: () => setDrawerOpen(false),
+  }).refreshOutline;
+  syncPreviewScroll = bindSplitScrollSync();
 
   document.addEventListener("click", (event) => {
     const target = event.target as Element;
@@ -442,14 +503,6 @@ window.addEventListener("DOMContentLoaded", () => {
     if (drawerTab) {
       const tab = drawerTab.dataset.mobileDrawerTab;
       if (tab === "files" || tab === "outline") setDrawerTab(tab);
-      return;
-    }
-
-    const outlineToggle = target.closest<HTMLButtonElement>(
-      "[data-mobile-outline-toggle]",
-    );
-    if (outlineToggle) {
-      toggleOutlineGroup(outlineToggle);
       return;
     }
 

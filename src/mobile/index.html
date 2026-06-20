@@ -26,7 +26,12 @@
             </svg>
           </button>
           <button type="button" data-mobile-menu-trigger="file" aria-expanded="false">文件</button>
-          <button type="button" class="mobile-ai-button">AI 对话保存模式</button>
+          <button
+            type="button"
+            class="mobile-ai-button"
+            id="ai-mode-toggle"
+            aria-expanded="false"
+          >AI 对话保存模式</button>
           <button type="button" class="mobile-icon-button" data-command="undo" aria-label="撤销" title="撤销">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M9 7 5 11l4 4"></path>
@@ -40,6 +45,11 @@
             </svg>
           </button>
           <button type="button" class="mobile-primary" data-command="save">保存</button>
+        </div>
+        <div class="mobile-ai-bar" id="ai-bar" hidden>
+          <span class="mobile-ai-label">AI 对话</span>
+          <button type="button" data-command="ai-prompt">👤 用户提示词</button>
+          <button type="button" data-command="ai-response">🤖 AI 回答</button>
         </div>
       </header>
 
@@ -137,33 +147,10 @@
             <button type="button" data-mobile-drawer-tab="outline">大纲</button>
           </div>
           <section class="mobile-drawer-panel" data-mobile-drawer-panel="files">
-            <div class="mobile-drawer-item">产品说明.md</div>
-            <div class="mobile-drawer-item">开发计划.md</div>
-            <div class="mobile-drawer-item">README.md</div>
+            <div class="mobile-drawer-list" id="mobile-recent-files"></div>
           </section>
           <section class="mobile-drawer-panel" data-mobile-drawer-panel="outline" hidden>
-            <div class="mobile-outline-tree">
-              <div class="mobile-drawer-item mobile-outline-parent">
-                <button
-                  type="button"
-                  class="mobile-outline-toggle"
-                  data-mobile-outline-toggle="product"
-                  aria-expanded="true"
-                  aria-label="折叠产品说明"
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5"></path></svg>
-                </button>
-                <span class="mobile-outline-label">产品说明</span>
-              </div>
-              <div class="mobile-outline-children" data-mobile-outline-children="product">
-                <div class="mobile-drawer-item mobile-outline-child">主要功能</div>
-                <div class="mobile-drawer-item mobile-outline-child">任务清单</div>
-              </div>
-              <div class="mobile-drawer-item mobile-outline-parent">
-                <span aria-hidden="true"></span>
-                <span class="mobile-outline-label">附录</span>
-              </div>
-            </div>
+            <nav class="mobile-outline-tree" id="mobile-outline" aria-label="文档大纲"></nav>
           </section>
         </aside>
       </div>
