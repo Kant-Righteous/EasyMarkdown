@@ -18,9 +18,23 @@ function defaultStorage(): StorageLike | null {
   }
 }
 
+function normalizeUri(value: string): string | null {
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "content:" && url.protocol !== "file:") return null;
+    url.protocol = url.protocol.toLocaleLowerCase();
+    url.hostname = url.hostname.toLocaleLowerCase();
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
 function normalizePath(value: unknown): string | null {
   if (typeof value !== "string") return null;
   const path = value.trim();
+  const uri = normalizeUri(path);
+  if (uri) return uri;
   return /^[A-Za-z]:[\\/]/.test(path) ||
     /^\\\\[^\\]/.test(path) ||
     path.startsWith("/")
@@ -93,8 +107,10 @@ export function replaceRecentFile(
   newPath: string,
   storage = defaultStorage(),
 ): void {
-  const normalizeForComparison = (path: string) =>
-    path.replace(/\\/g, "/").toLocaleLowerCase();
+  const normalizeForComparison = (path: string) => {
+    const uri = normalizeUri(path);
+    return uri ?? path.replace(/\\/g, "/").toLocaleLowerCase();
+  };
   const oldKey = normalizeForComparison(oldPath);
   const paths = loadRecentFiles(storage)
     .map((item) => (normalizeForComparison(item) === oldKey ? newPath : item))

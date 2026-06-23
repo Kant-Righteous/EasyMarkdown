@@ -10,6 +10,8 @@
     "core:window:allow-show",
     "core:window:allow-set-title",
     "dialog:default",
+    "fs:allow-read-text-file",
+    "fs:allow-write-text-file",
     "opener:allow-open-url",
     "opener:allow-default-urls"
   ]

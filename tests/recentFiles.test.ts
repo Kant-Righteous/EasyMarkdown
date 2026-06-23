@@ -35,13 +35,23 @@ test("最近文件置顶、去重并限制为 10 条", () => {
   assert.equal(paths.filter((path) => path === "C:\\docs\\5.md").length, 1);
 });
 
-test("过滤损坏数据和非法路径", () => {
+test("过滤损坏数据和非法路径，同时保留 Android URI", () => {
   assert.deepEqual(loadRecentFiles(storage("{broken")), []);
+  const uri =
+    "content://com.android.providers.downloads.documents/document/primary%3Aa.md";
   assert.deepEqual(
     loadRecentFiles(
-      storage(JSON.stringify(["C:\\docs\\a.md", 1, "relative.md", "/tmp/b.md"])),
+      storage(
+        JSON.stringify([
+          "C:\\docs\\a.md",
+          uri,
+          1,
+          "relative.md",
+          "/tmp/b.md",
+        ]),
+      ),
     ),
-    ["C:\\docs\\a.md", "/tmp/b.md"],
+    ["C:\\docs\\a.md", uri, "/tmp/b.md"],
   );
 });
 
@@ -57,4 +67,16 @@ test("重命名后原位置替换最近文件路径", () => {
   const store = storage(JSON.stringify(["C:\\a.md", "C:\\b.md"]));
   replaceRecentFile("C:\\a.md", "C:\\renamed.md", store);
   assert.deepEqual(loadRecentFiles(store), ["C:\\renamed.md", "C:\\b.md"]);
+});
+
+test("最近文件对普通路径和 URI 分别去重", () => {
+  const store = storage();
+  const uri =
+    "content://com.android.providers.downloads.documents/document/primary%3Aa.md";
+  addRecentFile("C:\\docs\\a.md", store);
+  addRecentFile(uri, store);
+  addRecentFile("C:\\docs\\a.md", store);
+  addRecentFile(uri, store);
+
+  assert.deepEqual(loadRecentFiles(store), [uri, "C:\\docs\\a.md"]);
 });

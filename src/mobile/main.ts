@@ -56,10 +56,16 @@ import {
 } from "../shared/utils/recentFiles";
 import {
   createSaveQueue,
-  getSaveAsDefaultPath,
   performSave,
-  type WriteConfirmation,
 } from "../shared/utils/saveFlow";
+import {
+  fileNameFromDocumentReference,
+  getMobileSaveDefaultReference,
+  getUnsupportedRenameMessage,
+  openSelectedMobileDocument,
+  readMobileDocument,
+  writeMobileDocument,
+} from "./fileAccess";
 import { bindPreviewLinks } from "./previewLinks";
 import { bindMobileSidebar } from "./sidebar";
 import { bindSplitScrollSync } from "./scrollSync";
@@ -81,7 +87,7 @@ const pdfFilters = [
 const enqueueSave = createSaveQueue();
 
 function fileNameFromPath(path: string): string {
-  const rawName = path.split(/[\\/]/).pop() || t("file.untitled");
+  const rawName = fileNameFromDocumentReference(path, t("file.untitled"));
   try {
     return decodeURIComponent(rawName);
   } catch {
@@ -144,7 +150,7 @@ async function prepareForFileTransition(): Promise<boolean> {
 }
 
 async function loadFile(path: string): Promise<void> {
-  const content = await invoke<string>("read_file", { path });
+  const content = await readMobileDocument(path);
   setContent(content);
   setState({
     currentFilePath: path,
@@ -195,8 +201,9 @@ async function openFile(): Promise<void> {
       fileAccessMode: "scoped",
       filters: markdownFilters,
     });
-    if (!path) return;
-    await openPathInCurrentWindow(path, { confirmUnsaved: false });
+    await openSelectedMobileDocument(path, (selectedPath) =>
+      openPathInCurrentWindow(selectedPath, { confirmUnsaved: false }),
+    );
   } catch (error) {
     await showError(t("file.openAction"), error);
   }
@@ -208,7 +215,7 @@ async function runSave(forceSaveAs: boolean): Promise<boolean> {
     path: forceSaveAs ? null : state.currentFilePath,
     selectPath: () =>
       save({
-        defaultPath: getSaveAsDefaultPath(
+        defaultPath: getMobileSaveDefaultReference(
           state.currentFilePath,
           state.currentFileName,
           t("file.untitled"),
@@ -216,8 +223,7 @@ async function runSave(forceSaveAs: boolean): Promise<boolean> {
         filters: markdownFilters,
       }),
     readContent: getContent,
-    write: (path, content) =>
-      invoke<WriteConfirmation>("write_file", { path, content }),
+    write: writeMobileDocument,
   });
 
   if (outcome.status === "cancelled") return false;
@@ -248,6 +254,11 @@ async function renameCurrentFile(): Promise<void> {
   const path = getState().currentFilePath;
   if (!path) {
     await showInfo("请先保存文件，再重命名。");
+    return;
+  }
+  const unsupportedMessage = getUnsupportedRenameMessage(path);
+  if (unsupportedMessage) {
+    await showInfo(unsupportedMessage);
     return;
   }
 

@@ -2,9 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const [html, source, styles] = await Promise.all([
+const [html, source, fileAccessSource, styles] = await Promise.all([
   readFile(new URL("../src/mobile/index.html", import.meta.url), "utf8"),
   readFile(new URL("../src/mobile/main.ts", import.meta.url), "utf8"),
+  readFile(new URL("../src/mobile/fileAccess.ts", import.meta.url), "utf8"),
   readFile(new URL("../src/mobile/style.css", import.meta.url), "utf8"),
 ]);
 
@@ -78,8 +79,11 @@ test("mobile bottom toolbar exposes five categories and confirmed commands", () 
 test("mobile script binds V4 interactions without importing desktop code", () => {
   assert.match(source, /@tauri-apps\/plugin-dialog/);
   assert.match(source, /invoke/);
-  assert.match(source, /read_file/);
-  assert.match(source, /write_file/);
+  assert.match(fileAccessSource, /@tauri-apps\/plugin-fs/);
+  assert.match(fileAccessSource, /read_file/);
+  assert.match(fileAccessSource, /write_file/);
+  assert.match(fileAccessSource, /readTextFile/);
+  assert.match(fileAccessSource, /writeTextFile/);
   assert.match(source, /rename_file/);
   assert.match(source, /export_markdown_pdf/);
   assert.doesNotMatch(source, /open: \(\) => undefined/);
